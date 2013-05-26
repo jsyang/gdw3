@@ -14,20 +14,40 @@ define [
         
     
     constructor : ->
-      makeFish = ->
-        new AIFish({
-          x : $$.R(50,300)
-          y : $$.R(50,300)
+      makeFish = (point, chasePoint=false) ->
+        fish = new AIFish({
+          x : point.x+$$.R(-120,120)
+          y : point.y+$$.R(-120,120)
         })
+        
+        if chasePoint is true
+          fish.target = point
+        fish
       
-      @entities = (makeFish() for i in [0...11])
+      p1 =
+        x : $$.R(100,300)
+        y : 50
+      
+      p2 =
+        x : $$.R(100,300)
+        y : 450
+        
+      p3 =
+        x : $$.R(200,400)
+        y : 200
+        
+      chaseMouse = (makeFish(p3) for i in [0...3])
+      chasePoint1 = (makeFish(p1, true) for i in [0...3])
+      chasePoint2 = (makeFish(p2, true) for i in [0...3])
+      
+      @entities = @entities.concat(chaseMouse, chasePoint1, chasePoint2)
       
     update : (dt) ->
       @mode[@mode.current].apply(@, [dt])
       @updateFish()
     
     updateFish : ->
-      e.chaseMouse() for e in @entities
+      e.move() for e in @entities
     
     draw : ->
       atom.context.clear()

@@ -20,19 +20,23 @@ define ->
       [0.6, '#6D59B3']
       [0.9, '#1E1D40']
     ]
-        
   
-    chaseBox :
-      w_2 : 128 # half the width of the actual box
-      h_2 : 128
+    chase :
+      w_2   : 64 # half the width of the actual box
+      h_2   : 64
+    
+    target : atom.input.mouse
   
     normalizeSpeed : ->
-      if Math.abs(@x - atom.input.mouse.x) > @chaseBox.w_2 or Math.abs(@y - atom.input.mouse.y) > @chaseBox.h_2
+      if (Math.abs(@x - @target.x) < @chase.w_2) and (Math.abs(@y - @target.y) < @chase.h_2)
+        # Major deceleration for close proximity to target
+        @speed.x *= @speed.normalizationFactor*0.71 unless Math.abs(@speed.x) < @maxSpeed * 0.6
+        @speed.y *= @speed.normalizationFactor*0.71 unless Math.abs(@speed.y) < @maxSpeed * 0.6
+      else
+        # Normal speed normalization
         @speed.x *= @speed.normalizationFactor unless Math.abs(@speed.x) < @maxSpeed
         @speed.y *= @speed.normalizationFactor unless Math.abs(@speed.y) < @maxSpeed
-      else
-        @speed.x *= @speed.normalizationFactor*0.7 unless Math.abs(@speed.x) < @maxSpeed
-        @speed.y *= @speed.normalizationFactor*0.7 unless Math.abs(@speed.y) < @maxSpeed
+        
   
     setRotation : ->
       newRotation = Math.atan(@speed.y/@speed.x)
@@ -42,17 +46,16 @@ define ->
      
       @rotation = newRotation
       
-    chaseMouse : ->
+    move : ->
       @x += @speed.x
       @y += @speed.y
     
-      @x -= 2
-      if @x > atom.input.mouse.x
+      if @x > @target.x
         @speed.x -= @dSpeed
       else
         @speed.x += @dSpeed
       
-      if @y > atom.input.mouse.y
+      if @y > @target.y
         @speed.y -= @dSpeed
       else
         @speed.y += @dSpeed
@@ -69,14 +72,16 @@ define ->
       
       ac.rotate(@rotation) unless @rotation is 0
       
-      
-      g = ac.createLinearGradient(-@w*0.2,0,@w*0.8,0)
-      (
-        g.addColorStop(i[0], i[1])
-        i[0] -= 0.0013
-        if i[0] < 0
-          i[0] = 1
-      ) for i in @gradient
+      if false
+        g = ac.createLinearGradient(-@w*0.2,0,@w*0.8,0)
+        (
+          g.addColorStop(i[0], i[1])
+          i[0] -= 0.0013
+          if i[0] < 0
+            i[0] = 1
+        ) for i in @gradient
+      else
+        g = '#8ba'
       
       ac.fillStyle = g
       
