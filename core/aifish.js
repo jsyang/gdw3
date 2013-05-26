@@ -91,8 +91,6 @@ define(function() {
       ac.closePath();
       ac.stroke();
       ac.fill();
-      ac.fillStyle = '#000';
-      ac.fillRect(-1, -1, 2, 2);
       return ac.restore();
     };
 

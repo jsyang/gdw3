@@ -82,9 +82,9 @@ define ->
       
       ac.rotate(@rotation) unless @rotation is 0
       
+      #ac.drawImage(atom.gfx.fish,-@w*0.5,-@h*0.5)
       ac.fillStyle = '#8a9'
       ac.beginPath()
-      
       # higher ratio means more exaggeration
       ac.moveTo(-(@w*0.2),-(@h>>1))
       ac.lineTo(-(@w*0.2), (@h>>1))
@@ -95,8 +95,9 @@ define ->
       ac.stroke()
       ac.fill()
       
-      ac.fillStyle = '#000'
-      ac.fillRect(-1,-1,2,2) # pivot point
+      
+      #ac.fillStyle = '#000'
+      #ac.fillRect(-1,-1,2,2) # pivot point
       
       ac.restore()
       

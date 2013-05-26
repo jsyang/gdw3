@@ -26,7 +26,8 @@ define [
       false
     
   atom.preloadImages({
-    icon       : 'icon.png'
+    icon      : 'icon.png'
+    fish      : 'fish.jpg'
   }, ->
     loaded.gfx = true
     isPreloadComplete()
