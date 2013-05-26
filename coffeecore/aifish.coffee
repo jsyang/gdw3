@@ -14,6 +14,13 @@ define ->
     speed     : null # obj defined in constructor
     dSpeed    : $$.r(0.21)+0.13
     maxSpeed  : $$.r(10)+2
+    
+    gradient : [
+      [0.2, '#1E1D40']
+      [0.6, '#6D59B3']
+      [0.9, '#1E1D40']
+    ]
+        
   
     chaseBox :
       w_2 : 128 # half the width of the actual box
@@ -30,36 +37,16 @@ define ->
     setRotation : ->
       newRotation = Math.atan(@speed.y/@speed.x)
         
-      # 4 quadrants
       if @speed.x < 0
         newRotation += Math.PI
-      #ypos = @speed.y > 0 
-      
+     
       @rotation = newRotation
       
-      # FIXME: coords fucking up
-      #if !xpos and ypos
-      #  newRotation -= Math.PI
-      #else if !xpos and ypos
-       # @rotation += Math.PI
-      #else if xpos and !ypos
-      
-      #if Math.abs(newRotation-@rotation) > @PI_2
-      #  @rotation = newRotation + @PI_2
-      #else
-      #  @rotation = newRotation
-      #
-      ## Make sure we stay within the bounds
-      #if Math.abs(@rotation) > @PI2
-      #  if @rotation > 0
-      #    @rotation -= @PI2
-      #  else
-      #    @rotation += @PI2
-          
     chaseMouse : ->
       @x += @speed.x
       @y += @speed.y
     
+      @x -= 2
       if @x > atom.input.mouse.x
         @speed.x -= @dSpeed
       else
@@ -82,8 +69,17 @@ define ->
       
       ac.rotate(@rotation) unless @rotation is 0
       
-      #ac.drawImage(atom.gfx.fish,-@w*0.5,-@h*0.5)
-      ac.fillStyle = '#8a9'
+      
+      g = ac.createLinearGradient(-@w*0.2,0,@w*0.8,0)
+      (
+        g.addColorStop(i[0], i[1])
+        i[0] -= 0.0013
+        if i[0] < 0
+          i[0] = 1
+      ) for i in @gradient
+      
+      ac.fillStyle = g
+      
       ac.beginPath()
       # higher ratio means more exaggeration
       ac.moveTo(-(@w*0.2),-(@h>>1))
@@ -94,7 +90,6 @@ define ->
       ac.closePath()
       ac.stroke()
       ac.fill()
-      
       
       #ac.fillStyle = '#000'
       #ac.fillRect(-1,-1,2,2) # pivot point
@@ -110,5 +105,6 @@ define ->
           y : 0
           normalizationFactor : $$.r(0.27)+0.51
         
-      @dSpeed                     = $$.r(0.12)+0.13
-      @maxSpeed                   = $$.r(8)+2
+      @dSpeed   = $$.r(0.12)+0.13
+      @maxSpeed = $$.r(8)+2
+
