@@ -20,7 +20,7 @@ define [
           y : $$.R(50,300)
         })
       
-      @entities = (makeFish() for i in [0...2])
+      @entities = (makeFish() for i in [0...11])
       
     update : (dt) ->
       @mode[@mode.current].apply(@, [dt])

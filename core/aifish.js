@@ -8,29 +8,52 @@ define(function() {
 
     AIFish.prototype.y = 0;
 
-    AIFish.prototype.w = 64;
+    AIFish.prototype.w = 16;
 
-    AIFish.prototype.h = 32;
+    AIFish.prototype.h = 8;
 
     AIFish.prototype.rotation = 0;
 
-    AIFish.prototype.speed = {
-      x: 0,
-      y: 0,
-      normalizationFactor: $$.r(0.3) + 0.3
+    AIFish.prototype.PI_2 = Math.PI * 0.5;
+
+    AIFish.prototype.PI2 = Math.PI * 2;
+
+    AIFish.prototype.speed = null;
+
+    AIFish.prototype.dSpeed = $$.r(0.21) + 0.13;
+
+    AIFish.prototype.maxSpeed = $$.r(10) + 2;
+
+    AIFish.prototype.chaseBox = {
+      w_2: 128,
+      h_2: 128
     };
 
-    AIFish.prototype.dSpeed = $$.r(0.12) + 0.13;
-
-    AIFish.prototype.maxSpeed = $$.r(8) + 2;
-
     AIFish.prototype.normalizeSpeed = function() {
-      if (!(Math.abs(this.speed.x) < this.maxSpeed)) {
-        this.speed.x *= this.speed.normalizationFactor;
+      if (Math.abs(this.x - atom.input.mouse.x) > this.chaseBox.w_2 || Math.abs(this.y - atom.input.mouse.y) > this.chaseBox.h_2) {
+        if (!(Math.abs(this.speed.x) < this.maxSpeed)) {
+          this.speed.x *= this.speed.normalizationFactor;
+        }
+        if (!(Math.abs(this.speed.y) < this.maxSpeed)) {
+          return this.speed.y *= this.speed.normalizationFactor;
+        }
+      } else {
+        if (!(Math.abs(this.speed.x) < this.maxSpeed)) {
+          this.speed.x *= this.speed.normalizationFactor * 0.7;
+        }
+        if (!(Math.abs(this.speed.y) < this.maxSpeed)) {
+          return this.speed.y *= this.speed.normalizationFactor * 0.7;
+        }
       }
-      if (!(Math.abs(this.speed.y) < this.maxSpeed)) {
-        return this.speed.y *= this.speed.normalizationFactor;
+    };
+
+    AIFish.prototype.setRotation = function() {
+      var newRotation;
+      newRotation = Math.atan(this.speed.y / this.speed.x);
+      if (this.speed.x < 0) {
+        newRotation += Math.PI;
       }
+      return this.rotation = newRotation;
     };
 
     AIFish.prototype.chaseMouse = function() {
@@ -46,7 +69,8 @@ define(function() {
       } else {
         this.speed.y += this.dSpeed;
       }
-      return this.normalizeSpeed();
+      this.normalizeSpeed();
+      return this.setRotation();
     };
 
     AIFish.prototype.draw = function() {
@@ -54,6 +78,9 @@ define(function() {
       ac = atom.context;
       ac.save();
       ac.translate(this.x, this.y);
+      if (this.rotation !== 0) {
+        ac.rotate(this.rotation);
+      }
       ac.fillStyle = '#8a9';
       ac.beginPath();
       ac.moveTo(-(this.w * 0.2), -(this.h >> 1));
@@ -75,7 +102,13 @@ define(function() {
         v = params[k];
         this[k] = v;
       }
-      this.speed.normalizationFactor = $$.r(0.3) + 0.3;
+      if (!(params.speed != null)) {
+        this.speed = {
+          x: 0,
+          y: 0,
+          normalizationFactor: $$.r(0.27) + 0.51
+        };
+      }
       this.dSpeed = $$.r(0.12) + 0.13;
       this.maxSpeed = $$.r(8) + 2;
     }

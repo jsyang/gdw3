@@ -26,7 +26,7 @@ define(['core/aifish'], function(AIFish) {
       this.entities = (function() {
         var _i, _results;
         _results = [];
-        for (i = _i = 0; _i < 2; i = ++_i) {
+        for (i = _i = 0; _i < 11; i = ++_i) {
           _results.push(makeFish());
         }
         return _results;
