@@ -173,7 +173,7 @@ define ->
         # a la http://code.bytespider.eu/post/20484989272/requestanimationframe-and-html5-game-loops
         setTimeout(=>
           @frameRequest = window.requestAnimationFrame s
-        , 30)
+        , 20)
   
       @last_step = Date.now()
       @frameRequest = window.requestAnimationFrame s

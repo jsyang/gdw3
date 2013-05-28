@@ -9,32 +9,28 @@ define ->
     draw : ->
       ac = atom.context
       
-      if false
-        ac.drawImage(atom.gfx.bubble, @x-@w_2+@dx, @y-@h_2)
-        
-      else
-        ac.save()
-        
-        ac.lineWidth                = @r*0.25
-        ac.strokeStyle              = '#111'
-        
-        ac.translate(@x,@y)
-        
-        ac.beginPath()
-        ac.arc(0, 0, @r, 0, @HOOKANGLE);
-        ac.stroke()
-        
-        ac.moveTo(@r, 0)
-        ac.quadraticCurveTo(@r*0.3, -@r*1.6, @r*0.3, -2*@r)
-        ac.stroke()
-        
-        ac.lineWidth                = 0.5
-        ac.strokeStyle              = '#222'
-        ac.moveTo(@r*0.3, -2*@r)
-        ac.lineTo(@r*0.3, -@y)
-        ac.stroke()
-        
-        ac.restore()
+      ac.save()
+      
+      ac.lineWidth                = @r*0.25
+      ac.strokeStyle              = '#111'
+      
+      ac.translate(@x,@y)
+      
+      ac.beginPath()
+      ac.arc(0, 0, @r, 0, @HOOKANGLE);
+      ac.stroke()
+      
+      ac.moveTo(@r, 0)
+      ac.quadraticCurveTo(@r*0.3, -@r*1.6, @r*0.3, -2*@r)
+      ac.stroke()
+      
+      ac.lineWidth                = 0.5
+      ac.strokeStyle              = '#222'
+      ac.moveTo(@r*0.3, -2*@r)
+      ac.lineTo(@r*0.3, -@y)
+      ac.stroke()
+      
+      ac.restore()
         
     move : ->
       if @y < -@r_2 or @x < -@r_2
@@ -47,10 +43,6 @@ define ->
     constructor : (params) ->
       @[k] = v for k, v of params
       
-      #image = atom.gfx.bubble
-      #@w_2 = image.width>>1
-      #@h_2 = image.height>>1
-      
-      @r    = $$.R(3,8)
+      @r    = $$.R(1,8)
       @r_2  = @r>>1
   

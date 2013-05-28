@@ -103,14 +103,14 @@ define [
         point =
           x : atom.width + $$.R(100, 200)
           y : $$.R(20,atom.height)
-        @addHook(point) for i in [0...$$.R(3,6)]
+        @addHook(point) for i in [0...$$.R(2,4)]
       return
       
     intervalAddBubbles : ->
       if @cycles % 50 is 0
         point =
           x : atom.width + $$.R(100, 200)
-          y : $$.R(10,atom.height)
+          y : $$.R(100,atom.height)
         @addBubble(point) for i in [0...$$.R(3,6)]
       return
     

@@ -15,26 +15,22 @@ define(function() {
     Hook.prototype.draw = function() {
       var ac;
       ac = atom.context;
-      if (false) {
-        return ac.drawImage(atom.gfx.bubble, this.x - this.w_2 + this.dx, this.y - this.h_2);
-      } else {
-        ac.save();
-        ac.lineWidth = this.r * 0.25;
-        ac.strokeStyle = '#111';
-        ac.translate(this.x, this.y);
-        ac.beginPath();
-        ac.arc(0, 0, this.r, 0, this.HOOKANGLE);
-        ac.stroke();
-        ac.moveTo(this.r, 0);
-        ac.quadraticCurveTo(this.r * 0.3, -this.r * 1.6, this.r * 0.3, -2 * this.r);
-        ac.stroke();
-        ac.lineWidth = 0.5;
-        ac.strokeStyle = '#222';
-        ac.moveTo(this.r * 0.3, -2 * this.r);
-        ac.lineTo(this.r * 0.3, -this.y);
-        ac.stroke();
-        return ac.restore();
-      }
+      ac.save();
+      ac.lineWidth = this.r * 0.25;
+      ac.strokeStyle = '#111';
+      ac.translate(this.x, this.y);
+      ac.beginPath();
+      ac.arc(0, 0, this.r, 0, this.HOOKANGLE);
+      ac.stroke();
+      ac.moveTo(this.r, 0);
+      ac.quadraticCurveTo(this.r * 0.3, -this.r * 1.6, this.r * 0.3, -2 * this.r);
+      ac.stroke();
+      ac.lineWidth = 0.5;
+      ac.strokeStyle = '#222';
+      ac.moveTo(this.r * 0.3, -2 * this.r);
+      ac.lineTo(this.r * 0.3, -this.y);
+      ac.stroke();
+      return ac.restore();
     };
 
     Hook.prototype.move = function() {

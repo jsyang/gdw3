@@ -17,18 +17,12 @@ define(function() {
     Bubble.prototype.draw = function() {
       var ac;
       ac = atom.context;
-      if (false) {
-        return ac.drawImage(atom.gfx.bubble, this.x - this.w_2 + this.dx, this.y - this.h_2);
-      } else {
-        ac.save();
-        ac.globalAlpha = 0.4;
-        ac.lineWidth = 2;
-        ac.fillStyle = '#A2CBF5';
-        ac.beginPath();
-        ac.arc(this.x - this.r_2 + this.dx, this.y - this.r_2, this.r, 0, this.PI2);
-        ac.fill();
-        return ac.restore();
-      }
+      ac.globalAlpha = 0.5;
+      ac.fillStyle = '#A2CBF5';
+      ac.beginPath();
+      ac.arc(this.x - this.r_2 + this.dx, this.y - this.r_2, this.r, 0, this.PI2);
+      ac.fill();
+      return ac.globalAlpha = 1;
     };
 
     Bubble.prototype.move = function() {
@@ -36,7 +30,7 @@ define(function() {
         return this.move = null;
       } else {
         this.y += this.dy;
-        this.x += $$.r(1) + 4 * this.game.current;
+        this.x += 4 * this.game.current;
         this.dx = this.dxAmplitude * Math.sin(this.lifetime);
         return this.lifetime += 0.2;
       }
@@ -48,7 +42,7 @@ define(function() {
         v = params[k];
         this[k] = v;
       }
-      this.r = $$.R(1, 2) + $$.r(3);
+      this.r = $$.R(1, 5) + $$.r(5);
       this.r_2 = this.r >> 1;
       this.dy = -$$.r(2.9) - 0.85;
       this.dxAmplitude = $$.r(3) + 1;

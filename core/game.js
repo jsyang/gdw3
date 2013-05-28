@@ -137,7 +137,7 @@ define(['core/aifish', 'core/bubble', 'core/hook'], function(AIFish, Bubble, Hoo
           x: atom.width + $$.R(100, 200),
           y: $$.R(20, atom.height)
         };
-        for (i = _i = 0, _ref = $$.R(3, 6); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        for (i = _i = 0, _ref = $$.R(2, 4); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           this.addHook(point);
         }
       }
@@ -148,7 +148,7 @@ define(['core/aifish', 'core/bubble', 'core/hook'], function(AIFish, Bubble, Hoo
       if (this.cycles % 50 === 0) {
         point = {
           x: atom.width + $$.R(100, 200),
-          y: $$.R(10, atom.height)
+          y: $$.R(100, atom.height)
         };
         for (i = _i = 0, _ref = $$.R(3, 6); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           this.addBubble(point);
