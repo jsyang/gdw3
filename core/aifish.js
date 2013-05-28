@@ -8,15 +8,13 @@ define(function() {
 
     AIFish.prototype.y = 0;
 
-    AIFish.prototype.w = 16;
+    AIFish.prototype.w = 8;
 
-    AIFish.prototype.h = 8;
+    AIFish.prototype.h = 6;
 
     AIFish.prototype.rotation = 0;
 
-    AIFish.prototype.PI_2 = Math.PI * 0.5;
-
-    AIFish.prototype.PI2 = Math.PI * 2;
+    AIFish.prototype.lastPosition = null;
 
     AIFish.prototype.speed = null;
 
@@ -24,7 +22,34 @@ define(function() {
 
     AIFish.prototype.maxSpeed = $$.r(10) + 2;
 
-    AIFish.prototype.gradient = [[0.2, '#1E1D40'], [0.6, '#6D59B3'], [0.9, '#1E1D40']];
+    AIFish.prototype.COLOR = {
+      HEX: {
+        pink: '#ED3776',
+        purple: '#B349AB',
+        blue: '#4527F2',
+        cyan: '#27C6F2',
+        teal: '#27F2B5',
+        green: '#27F24C',
+        leaf: '#97F227',
+        grass: '#D7F227',
+        orange: '#F2A427'
+      },
+      DISTRIB: {
+        pink: 1,
+        purple: 2,
+        blue: 4,
+        cyan: 6,
+        teal: 5,
+        green: 3,
+        leaf: 2,
+        grass: 2,
+        orange: 1
+      }
+    };
+
+    AIFish.prototype.color = null;
+
+    AIFish.prototype.gradient = [[0.2, '#6D59B3'], [0.8, '#484063']];
 
     AIFish.prototype.chase = {
       w_2: 64,
@@ -35,10 +60,10 @@ define(function() {
 
     AIFish.prototype.normalizeSpeed = function() {
       if ((Math.abs(this.x - this.target.x) < this.chase.w_2) && (Math.abs(this.y - this.target.y) < this.chase.h_2)) {
-        if (!(Math.abs(this.speed.x) < this.maxSpeed * 0.6)) {
+        if (!(Math.abs(this.speed.x) < this.maxSpeed * 0.4)) {
           this.speed.x *= this.speed.normalizationFactor * 0.71;
         }
-        if (!(Math.abs(this.speed.y) < this.maxSpeed * 0.6)) {
+        if (!(Math.abs(this.speed.y) < this.maxSpeed * 0.4)) {
           return this.speed.y *= this.speed.normalizationFactor * 0.71;
         }
       } else {
@@ -63,6 +88,7 @@ define(function() {
     AIFish.prototype.move = function() {
       this.x += this.speed.x;
       this.y += this.speed.y;
+      this.x += this.game.current;
       if (this.x > this.target.x) {
         this.speed.x -= this.dSpeed;
       } else {
@@ -91,13 +117,13 @@ define(function() {
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           i = _ref[_i];
           g.addColorStop(i[0], i[1]);
-          i[0] -= 0.0013;
+          i[0] -= 0.0313;
           if (i[0] < 0) {
             i[0] = 1;
           }
         }
       } else {
-        g = '#8ba';
+        g = this.color;
       }
       ac.fillStyle = g;
       ac.beginPath();
@@ -125,8 +151,19 @@ define(function() {
           normalizationFactor: $$.r(0.27) + 0.51
         };
       }
-      this.dSpeed = $$.r(0.12) + 0.13;
-      this.maxSpeed = $$.r(8) + 2;
+      if (params.dSpeed == null) {
+        this.dSpeed = $$.r(0.12) + 0.13;
+      }
+      if (params.maxSpeed == null) {
+        this.maxSpeed = $$.r(8) + 4;
+      }
+      this.lastPosition = {
+        x: this.x,
+        y: this.y
+      };
+      if (params.color == null) {
+        this.color = this.COLOR.HEX[$$.WR(this.COLOR.DISTRIB)];
+      }
     }
 
     return AIFish;
