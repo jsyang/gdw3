@@ -18,6 +18,9 @@ define ->
     # Have we been hooked or bagged?
     caught        : false
     
+    # Are we part of the player's posse?
+    player        : false
+    
     COLOR :
       HEX :
         # colors are unique to ability
@@ -89,26 +92,36 @@ define ->
         if @maxSpeed < Math.abs(@game.current)
           @move = null
           @catcher = null
+        
+        else
+          if @player is false
+            @checkHits()
           
-        @x += @speed.x
-        @y += @speed.y
-      
-        @x += @game.current
+          @x += @speed.x
+          @y += @speed.y
         
-        if @x > @target.x
-          @speed.x -= @dSpeed
-        else
-          @speed.x += @dSpeed
-        
-        if @y > @target.y
-          @speed.y -= @dSpeed
-        else
-          @speed.y += @dSpeed
-        
-        
-        @normalizeSpeed()
-        @setRotation()
-      
+          @x += @game.current
+          
+          if @x > @target.x
+            @speed.x -= @dSpeed
+          else
+            @speed.x += @dSpeed
+          
+          if @y > @target.y
+            @speed.y -= @dSpeed
+          else
+            @speed.y += @dSpeed
+          
+          
+          @normalizeSpeed()
+          @setRotation()
+    
+    recruit : ->
+      # todo : extend this for further uses
+      atom.playSound('recruit')
+      @target = atom.input.mouse
+      @player = true
+    
     hooked : (e) ->
       @catcher = e
       @caught  = true
@@ -155,6 +168,28 @@ define ->
       
       ac.restore()
     
+    checkHits : ->
+      bin = @game.hash2d.get(@)
+      (
+        if entity? and @canHit(entity) and @hit(entity) and entity.player
+          @recruit()
+          break
+      ) for entity in bin
+      return 
+      
+    canHit : (e) ->
+      switch e.constructor.name
+        when 'AIFish'
+          if @player then false else true
+        else
+          false
+          
+    hit : (e) ->
+      dx = e.x - @x
+      dy = e.y - @y
+      
+      dx*dx + dy*dy < @r2+e.r2
+    
     updateHitRadius : ->
       @r2 = Math.min(@w,@h)
       @r2 *= @r2
@@ -162,20 +197,20 @@ define ->
     constructor : (params) ->
       @[k] = v for k, v of params
       
-      if !params.speed?
+      if !@speed?
         @speed =
           x : 0
           y : 0
           normalizationFactor : $$.r(0.27)+0.51
       
     
-      @dSpeed   = $$.r(0.12)+0.13 unless params.dSpeed?
-      @maxSpeed = $$.r(8)+4       unless params.maxSpeed?
+      @dSpeed   = $$.r(0.12)+0.13 unless @dSpeed?
+      @maxSpeed = $$.r(8)+4       unless @maxSpeed?
       
       @lastPosition =
         x : @x
         y : @y
 
-      @color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless params.color?
+      @color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless @color?
 
       @updateHitRadius()

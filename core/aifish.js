@@ -25,6 +25,8 @@ define(function() {
 
     AIFish.prototype.caught = false;
 
+    AIFish.prototype.player = false;
+
     AIFish.prototype.COLOR = {
       HEX: {
         pink: '#ED3776',
@@ -100,24 +102,34 @@ define(function() {
       } else {
         if (this.maxSpeed < Math.abs(this.game.current)) {
           this.move = null;
-          this.catcher = null;
-        }
-        this.x += this.speed.x;
-        this.y += this.speed.y;
-        this.x += this.game.current;
-        if (this.x > this.target.x) {
-          this.speed.x -= this.dSpeed;
+          return this.catcher = null;
         } else {
-          this.speed.x += this.dSpeed;
+          if (this.player === false) {
+            this.checkHits();
+          }
+          this.x += this.speed.x;
+          this.y += this.speed.y;
+          this.x += this.game.current;
+          if (this.x > this.target.x) {
+            this.speed.x -= this.dSpeed;
+          } else {
+            this.speed.x += this.dSpeed;
+          }
+          if (this.y > this.target.y) {
+            this.speed.y -= this.dSpeed;
+          } else {
+            this.speed.y += this.dSpeed;
+          }
+          this.normalizeSpeed();
+          return this.setRotation();
         }
-        if (this.y > this.target.y) {
-          this.speed.y -= this.dSpeed;
-        } else {
-          this.speed.y += this.dSpeed;
-        }
-        this.normalizeSpeed();
-        return this.setRotation();
       }
+    };
+
+    AIFish.prototype.recruit = function() {
+      atom.playSound('recruit');
+      this.target = atom.input.mouse;
+      return this.player = true;
     };
 
     AIFish.prototype.hooked = function(e) {
@@ -167,6 +179,39 @@ define(function() {
       return ac.restore();
     };
 
+    AIFish.prototype.checkHits = function() {
+      var bin, entity, _i, _len;
+      bin = this.game.hash2d.get(this);
+      for (_i = 0, _len = bin.length; _i < _len; _i++) {
+        entity = bin[_i];
+        if ((entity != null) && this.canHit(entity) && this.hit(entity) && entity.player) {
+          this.recruit();
+          break;
+        }
+      }
+    };
+
+    AIFish.prototype.canHit = function(e) {
+      switch (e.constructor.name) {
+        case 'AIFish':
+          if (this.player) {
+            return false;
+          } else {
+            return true;
+          }
+          break;
+        default:
+          return false;
+      }
+    };
+
+    AIFish.prototype.hit = function(e) {
+      var dx, dy;
+      dx = e.x - this.x;
+      dy = e.y - this.y;
+      return dx * dx + dy * dy < this.r2 + e.r2;
+    };
+
     AIFish.prototype.updateHitRadius = function() {
       this.r2 = Math.min(this.w, this.h);
       return this.r2 *= this.r2;
@@ -178,24 +223,24 @@ define(function() {
         v = params[k];
         this[k] = v;
       }
-      if (params.speed == null) {
+      if (this.speed == null) {
         this.speed = {
           x: 0,
           y: 0,
           normalizationFactor: $$.r(0.27) + 0.51
         };
       }
-      if (params.dSpeed == null) {
+      if (this.dSpeed == null) {
         this.dSpeed = $$.r(0.12) + 0.13;
       }
-      if (params.maxSpeed == null) {
+      if (this.maxSpeed == null) {
         this.maxSpeed = $$.r(8) + 4;
       }
       this.lastPosition = {
         x: this.x,
         y: this.y
       };
-      if (params.color == null) {
+      if (this.color == null) {
         this.color = this.COLOR.HEX[$$.WR(this.COLOR.DISTRIB)];
       }
       this.updateHitRadius();

@@ -29,7 +29,8 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     tick: 'tick.mp3',
     plankton1: 'plankton1.mp3',
     plankton2: 'plankton2.mp3',
-    plankton3: 'plankton3.mp3'
+    plankton3: 'plankton3.mp3',
+    recruit: 'recruit.mp3'
   }, function() {
     loaded.sfx = true;
     return isPreloadComplete();

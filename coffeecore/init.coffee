@@ -40,6 +40,8 @@ define [
     plankton1   : 'plankton1.mp3'
     plankton2   : 'plankton2.mp3'
     plankton3   : 'plankton3.mp3'
+    
+    recruit     : 'recruit.mp3'
   }, ->
     loaded.sfx = true
     isPreloadComplete()

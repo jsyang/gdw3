@@ -21,13 +21,15 @@ define [
     constructor : ->
       makeFish = (point, chasePoint=false) =>
         fish = new AIFish({
-          game  : @
-          x     : point.x+$$.R(-120,120)
-          y     : point.y+$$.R(-120,120)
+          game    : @
+          x       : point.x+$$.R(-120,120)
+          y       : point.y+$$.R(-120,120)
+          player  : true
         })
         
         if chasePoint is true
           fish.target = point
+          fish.player = false
         fish
       
       p1 =

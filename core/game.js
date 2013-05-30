@@ -28,10 +28,12 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
         fish = new AIFish({
           game: _this,
           x: point.x + $$.R(-120, 120),
-          y: point.y + $$.R(-120, 120)
+          y: point.y + $$.R(-120, 120),
+          player: true
         });
         if (chasePoint === true) {
           fish.target = point;
+          fish.player = false;
         }
         return fish;
       };
