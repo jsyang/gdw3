@@ -3,7 +3,8 @@ define [
   'core/bubble'
   'core/hook'
   'core/hash2d'
-], (AIFish, Bubble, Hook, Hash2D) ->
+  'core/plankton'
+], (AIFish, Bubble, Hook, Hash2D, Plankton) ->
     
   class FishGame extends atom.Game
     
@@ -71,6 +72,13 @@ define [
     #  window.onblur = => @stop
     #  window.onfocus = => @run
     
+    addPlankton : (p) ->
+      @entities.push(new Plankton({
+        x     : p.x+$$.R(-32,32)
+        y     : p.y+$$.R(-32,32)
+        game  : @
+      }))
+      
     addHook : (p) ->
       @entities.push(new Hook({
         x     : p.x+$$.R(-32,32)
@@ -96,9 +104,18 @@ define [
         @updateEntities()
         @intervalAddBubbles()
         @intervalAddHooks()
+        @intervalAddPlankton()
       
         #if (atom.input.pressed('touchfinger') or atom.input.pressed('mouseleft'))
         #  @addHook(atom.input.mouse)
+    
+    intervalAddPlankton : ->
+      if (@cycles+7) % 120 is 0
+        point =
+          x : atom.width + $$.R(100, 200)
+          y : $$.R(20,atom.height-20)
+        @addPlankton(point) for i in [0...$$.R(2,8)]
+      return
     
     intervalAddHooks : ->
       if (@cycles+15) % 75 is 0

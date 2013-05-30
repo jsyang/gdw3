@@ -9,10 +9,11 @@ define ->
     rotation  : 0
     
     # Defined in constructor
-    lastPosition  : null
-    speed         : null 
-    dSpeed        : $$.r(0.21)+0.13
-    maxSpeed      : $$.r(10)+2
+    lastPosition    : null
+    speed           : null 
+    dSpeed          : $$.r(0.21)+0.13
+    maxSpeed        : $$.r(10)+2
+    fatnessPenalty  : 0.91
     
     # Have we been hooked or bagged?
     caught        : false
@@ -83,6 +84,12 @@ define ->
           @y = @catcher.y
         
       else
+        # todo : make it so something happens if player's fish dips out.. / is too slow to catch up
+        # bonus for a spawning stage?
+        if @maxSpeed < Math.abs(@game.current)
+          @move = null
+          @catcher = null
+          
         @x += @speed.x
         @y += @speed.y
       
@@ -105,6 +112,12 @@ define ->
     hooked : (e) ->
       @catcher = e
       @caught  = true
+    
+    eat : (e) ->
+      @w += e.r>>2
+      @h += e.r>>2
+      @updateHitRadius()
+      @maxSpeed *= @fatnessPenalty
     
     draw : ->
       ac = atom.context
@@ -141,7 +154,11 @@ define ->
       #ac.fillRect(-1,-1,2,2) # pivot point
       
       ac.restore()
-      
+    
+    updateHitRadius : ->
+      @r2 = Math.min(@w,@h)
+      @r2 *= @r2
+    
     constructor : (params) ->
       @[k] = v for k, v of params
       
@@ -161,6 +178,4 @@ define ->
 
       @color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless params.color?
 
-      # set the hit radius
-      @r2 = Math.min(@w,@h)
-      @r2 *= @r2
+      @updateHitRadius()

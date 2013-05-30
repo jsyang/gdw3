@@ -21,6 +21,8 @@ define(function() {
 
     AIFish.prototype.maxSpeed = $$.r(10) + 2;
 
+    AIFish.prototype.fatnessPenalty = 0.91;
+
     AIFish.prototype.caught = false;
 
     AIFish.prototype.COLOR = {
@@ -96,6 +98,10 @@ define(function() {
           return this.y = this.catcher.y;
         }
       } else {
+        if (this.maxSpeed < Math.abs(this.game.current)) {
+          this.move = null;
+          this.catcher = null;
+        }
         this.x += this.speed.x;
         this.y += this.speed.y;
         this.x += this.game.current;
@@ -117,6 +123,13 @@ define(function() {
     AIFish.prototype.hooked = function(e) {
       this.catcher = e;
       return this.caught = true;
+    };
+
+    AIFish.prototype.eat = function(e) {
+      this.w += e.r >> 2;
+      this.h += e.r >> 2;
+      this.updateHitRadius();
+      return this.maxSpeed *= this.fatnessPenalty;
     };
 
     AIFish.prototype.draw = function() {
@@ -154,6 +167,11 @@ define(function() {
       return ac.restore();
     };
 
+    AIFish.prototype.updateHitRadius = function() {
+      this.r2 = Math.min(this.w, this.h);
+      return this.r2 *= this.r2;
+    };
+
     function AIFish(params) {
       var k, v;
       for (k in params) {
@@ -180,8 +198,7 @@ define(function() {
       if (params.color == null) {
         this.color = this.COLOR.HEX[$$.WR(this.COLOR.DISTRIB)];
       }
-      this.r2 = Math.min(this.w, this.h);
-      this.r2 *= this.r2;
+      this.updateHitRadius();
     }
 
     return AIFish;

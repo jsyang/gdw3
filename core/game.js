@@ -1,7 +1,7 @@
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d'], function(AIFish, Bubble, Hook, Hash2D) {
+define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton'], function(AIFish, Bubble, Hook, Hash2D, Plankton) {
   var FishGame;
   return FishGame = (function(_super) {
 
@@ -90,6 +90,14 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d'], function(AIFi
       return atom.input.bind(atom.touch.TOUCHING, 'touchfinger');
     };
 
+    FishGame.prototype.addPlankton = function(p) {
+      return this.entities.push(new Plankton({
+        x: p.x + $$.R(-32, 32),
+        y: p.y + $$.R(-32, 32),
+        game: this
+      }));
+    };
+
     FishGame.prototype.addHook = function(p) {
       return this.entities.push(new Hook({
         x: p.x + $$.R(-32, 32),
@@ -115,7 +123,21 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d'], function(AIFi
       move: function(dt) {
         this.updateEntities();
         this.intervalAddBubbles();
-        return this.intervalAddHooks();
+        this.intervalAddHooks();
+        return this.intervalAddPlankton();
+      }
+    };
+
+    FishGame.prototype.intervalAddPlankton = function() {
+      var i, point, _i, _ref;
+      if ((this.cycles + 7) % 120 === 0) {
+        point = {
+          x: atom.width + $$.R(100, 200),
+          y: $$.R(20, atom.height - 20)
+        };
+        for (i = _i = 0, _ref = $$.R(2, 8); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          this.addPlankton(point);
+        }
       }
     };
 
