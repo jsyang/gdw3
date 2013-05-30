@@ -14,6 +14,9 @@ define ->
     dSpeed        : $$.r(0.21)+0.13
     maxSpeed      : $$.r(10)+2
     
+    # Have we been hooked or bagged?
+    caught        : false
+    
     COLOR :
       HEX :
         # colors are unique to ability
@@ -71,26 +74,38 @@ define ->
       @rotation = newRotation
       
     move : ->
-      @x += @speed.x
-      @y += @speed.y
+      if @caught
+        if @x < 0 or @y < 0
+          @move = null
+          @catcher = null
+        else
+          @x = @catcher.x
+          @y = @catcher.y
+        
+      else
+        @x += @speed.x
+        @y += @speed.y
+      
+        @x += @game.current
+        
+        if @x > @target.x
+          @speed.x -= @dSpeed
+        else
+          @speed.x += @dSpeed
+        
+        if @y > @target.y
+          @speed.y -= @dSpeed
+        else
+          @speed.y += @dSpeed
+        
+        
+        @normalizeSpeed()
+        @setRotation()
+      
+    hooked : (e) ->
+      @catcher = e
+      @caught  = true
     
-      @x += @game.current
-      
-      if @x > @target.x
-        @speed.x -= @dSpeed
-      else
-        @speed.x += @dSpeed
-      
-      if @y > @target.y
-        @speed.y -= @dSpeed
-      else
-        @speed.y += @dSpeed
-      
-      
-      @normalizeSpeed()
-      @setRotation()
-      
-      
     draw : ->
       ac = atom.context
       ac.save()
@@ -146,3 +161,6 @@ define ->
 
       @color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless params.color?
 
+      # set the hit radius
+      @r2 = Math.min(@w,@h)
+      @r2 *= @r2

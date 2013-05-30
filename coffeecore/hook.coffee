@@ -3,7 +3,7 @@ define ->
     x : 0
     y : 0
     
-    lifetime  : 0
+    caught    : false
     HOOKANGLE : 3.6185837
     
     draw : ->
@@ -12,7 +12,7 @@ define ->
       ac.save()
       
       ac.lineWidth                = @r*0.25
-      ac.strokeStyle              = '#111'
+      ac.strokeStyle              = if @caught then '#611' else '#111'
       
       ac.translate(@x,@y)
       
@@ -25,7 +25,7 @@ define ->
       ac.stroke()
       
       ac.lineWidth                = 0.5
-      ac.strokeStyle              = '#222'
+      ac.strokeStyle              = if @caught then '#622' else '#222'
       ac.moveTo(@r*0.3, -2*@r)
       ac.lineTo(@r*0.3, -@y)
       ac.stroke()
@@ -36,13 +36,44 @@ define ->
       if @y < -@r_2 or @x < -@r_2
         @move = null
       else
-        #@y  += @dy
-        @x  += 2*@game.current
-        #@lifetime += 0.2
+        if @caught
+          @y -= 3
+        else
+          @checkHits()
+          
+        @x += 2*@game.current
+    
+    checkHits : ->
+      bin = @game.hash2d.get(@)
+      (
+        if entity? and @canHit(entity) and @hit(entity)
+          atom.playSound('tick')
+          entity.hooked(@) if entity.hooked?
+          @caught = true
+          break
+      ) for entity in bin
+      return 
+    
+    
+    canHit : (e) ->
+      switch e.constructor.name
+        when 'AIFish'
+          true
+        else
+          false
+    
+    # distance between
+    hit : (e) ->
+      dx = e.x - @x
+      dy = e.y - @y
       
+      dx*dx + dy*dy < @r2+e.r2
+    
     constructor : (params) ->
       @[k] = v for k, v of params
       
       @r    = $$.R(1,8)
       @r_2  = @r>>1
+      
+      @r2   = @r*@r
   

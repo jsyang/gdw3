@@ -26,7 +26,8 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     return isPreloadComplete();
   });
   atom.preloadSounds({
-    crack: 'crack.mp3'
+    crack: 'crack.mp3',
+    tick: 'tick.mp3'
   }, function() {
     loaded.sfx = true;
     return isPreloadComplete();

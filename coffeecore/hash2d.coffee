@@ -13,31 +13,37 @@ define ->
       @
     
     add : (entity) ->
-      if entity.x > atom.width or entity.x < 0 or entity.y > atom.height or entity.y < 0
+      if entity.x > @wPixels or entity.x < 0 or entity.y > @hPixels or entity.y < 0
       else
         @_obj[@w*(entity.y>>@_size)+(entity.x>>@_size)].push(entity)
       @
     
     get : (entity) ->
-      if entity.x > atom.width or entity.x < 0 or entity.y > atom.height or entity.y < 0
+      if entity.x > @wPixels or entity.x < 0 or entity.y > @hPixels or entity.y < 0
         []
       else
         @_obj[@w*(entity.y>>@_size)+(entity.x>>@_size)]
     
     nullify : ->
       (
-        (a = null) for i in [0...a.length]
+        (a[i] = null) for i in [0...a.length]
       ) for a in @_obj
       @
     
     constructor : (params) ->
-      if !params.w? or !params.h?
+      @[k] = v for k, v of params
+      
+      if !@w? or !@h?
         @w = atom.width   >>@_size
         @h = atom.height  >>@_size
+        @wPixels = @w<<@_size
+        @hPixels = @h<<@_size
         @w++
-        @h++
-        @_objLength = @w*@h
-        
-      @[k] = v for k, v of params
+        @h++        
+      else
+        @wPixels = @w<<@_size
+        @hPixels = @h<<@_size
+      
+      @_objLength = @w*@h
       
       @reset()

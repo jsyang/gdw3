@@ -21,6 +21,8 @@ define(function() {
 
     AIFish.prototype.maxSpeed = $$.r(10) + 2;
 
+    AIFish.prototype.caught = false;
+
     AIFish.prototype.COLOR = {
       HEX: {
         pink: '#ED3776',
@@ -85,21 +87,36 @@ define(function() {
     };
 
     AIFish.prototype.move = function() {
-      this.x += this.speed.x;
-      this.y += this.speed.y;
-      this.x += this.game.current;
-      if (this.x > this.target.x) {
-        this.speed.x -= this.dSpeed;
+      if (this.caught) {
+        if (this.x < 0 || this.y < 0) {
+          this.move = null;
+          return this.catcher = null;
+        } else {
+          this.x = this.catcher.x;
+          return this.y = this.catcher.y;
+        }
       } else {
-        this.speed.x += this.dSpeed;
+        this.x += this.speed.x;
+        this.y += this.speed.y;
+        this.x += this.game.current;
+        if (this.x > this.target.x) {
+          this.speed.x -= this.dSpeed;
+        } else {
+          this.speed.x += this.dSpeed;
+        }
+        if (this.y > this.target.y) {
+          this.speed.y -= this.dSpeed;
+        } else {
+          this.speed.y += this.dSpeed;
+        }
+        this.normalizeSpeed();
+        return this.setRotation();
       }
-      if (this.y > this.target.y) {
-        this.speed.y -= this.dSpeed;
-      } else {
-        this.speed.y += this.dSpeed;
-      }
-      this.normalizeSpeed();
-      return this.setRotation();
+    };
+
+    AIFish.prototype.hooked = function(e) {
+      this.catcher = e;
+      return this.caught = true;
     };
 
     AIFish.prototype.draw = function() {
@@ -163,6 +180,8 @@ define(function() {
       if (params.color == null) {
         this.color = this.COLOR.HEX[$$.WR(this.COLOR.DISTRIB)];
       }
+      this.r2 = Math.min(this.w, this.h);
+      this.r2 *= this.r2;
     }
 
     return AIFish;

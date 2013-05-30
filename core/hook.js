@@ -7,7 +7,7 @@ define(function() {
 
     Hook.prototype.y = 0;
 
-    Hook.prototype.lifetime = 0;
+    Hook.prototype.caught = false;
 
     Hook.prototype.HOOKANGLE = 3.6185837;
 
@@ -16,7 +16,7 @@ define(function() {
       ac = atom.context;
       ac.save();
       ac.lineWidth = this.r * 0.25;
-      ac.strokeStyle = '#111';
+      ac.strokeStyle = this.caught ? '#611' : '#111';
       ac.translate(this.x, this.y);
       ac.beginPath();
       ac.arc(0, 0, this.r, 0, this.HOOKANGLE);
@@ -25,7 +25,7 @@ define(function() {
       ac.quadraticCurveTo(this.r * 0.3, -this.r * 1.6, this.r * 0.3, -2 * this.r);
       ac.stroke();
       ac.lineWidth = 0.5;
-      ac.strokeStyle = '#222';
+      ac.strokeStyle = this.caught ? '#622' : '#222';
       ac.moveTo(this.r * 0.3, -2 * this.r);
       ac.lineTo(this.r * 0.3, -this.y);
       ac.stroke();
@@ -36,8 +36,45 @@ define(function() {
       if (this.y < -this.r_2 || this.x < -this.r_2) {
         return this.move = null;
       } else {
+        if (this.caught) {
+          this.y -= 3;
+        } else {
+          this.checkHits();
+        }
         return this.x += 2 * this.game.current;
       }
+    };
+
+    Hook.prototype.checkHits = function() {
+      var bin, entity, _i, _len;
+      bin = this.game.hash2d.get(this);
+      for (_i = 0, _len = bin.length; _i < _len; _i++) {
+        entity = bin[_i];
+        if ((entity != null) && this.canHit(entity) && this.hit(entity)) {
+          atom.playSound('tick');
+          if (entity.hooked != null) {
+            entity.hooked(this);
+          }
+          this.caught = true;
+          break;
+        }
+      }
+    };
+
+    Hook.prototype.canHit = function(e) {
+      switch (e.constructor.name) {
+        case 'AIFish':
+          return true;
+        default:
+          return false;
+      }
+    };
+
+    Hook.prototype.hit = function(e) {
+      var dx, dy;
+      dx = e.x - this.x;
+      dy = e.y - this.y;
+      return dx * dx + dy * dy < this.r2 + e.r2;
     };
 
     function Hook(params) {
@@ -48,6 +85,7 @@ define(function() {
       }
       this.r = $$.R(1, 8);
       this.r_2 = this.r >> 1;
+      this.r2 = this.r * this.r;
     }
 
     return Hook;

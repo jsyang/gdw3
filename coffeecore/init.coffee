@@ -36,6 +36,7 @@ define [
   
   atom.preloadSounds({
     crack       : 'crack.mp3'
+    tick        : 'tick.mp3'
   }, ->
     loaded.sfx = true
     isPreloadComplete()

@@ -1,7 +1,7 @@
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-define(['core/aifish', 'core/bubble', 'core/hook'], function(AIFish, Bubble, Hook) {
+define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d'], function(AIFish, Bubble, Hook, Hash2D) {
   var FishGame;
   return FishGame = (function(_super) {
 
@@ -81,23 +81,13 @@ define(['core/aifish', 'core/bubble', 'core/hook'], function(AIFish, Bubble, Hoo
         maxSpeed: 9
       });
       this.entities.push(this.player);
+      this.hash2d = new Hash2D();
       this.registerInputs();
-      this.registerFocus();
     }
 
     FishGame.prototype.registerInputs = function() {
       atom.input.bind(atom.button.LEFT, 'mouseleft');
       return atom.input.bind(atom.touch.TOUCHING, 'touchfinger');
-    };
-
-    FishGame.prototype.registerFocus = function() {
-      var _this = this;
-      window.onblur = function() {
-        return _this.stop;
-      };
-      return window.onfocus = function() {
-        return _this.run;
-      };
     };
 
     FishGame.prototype.addHook = function(p) {
@@ -158,6 +148,7 @@ define(['core/aifish', 'core/bubble', 'core/hook'], function(AIFish, Bubble, Hoo
     FishGame.prototype.updateEntities = function() {
       var e, newEntities, _i, _j, _len, _len1, _ref, _ref1;
       if (this.cycles > this.clearEntitiesInterval) {
+        this.hash2d.reset();
         newEntities = [];
         _ref = this.entities;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -172,11 +163,13 @@ define(['core/aifish', 'core/bubble', 'core/hook'], function(AIFish, Bubble, Hoo
         this.entities = newEntities;
         this.cycles = 0;
       } else {
+        this.hash2d.nullify();
         _ref1 = this.entities;
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           e = _ref1[_j];
           if (e.move != null) {
             e.move();
+            this.hash2d.add(e);
           }
         }
         this.cycles++;

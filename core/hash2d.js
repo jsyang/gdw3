@@ -19,7 +19,7 @@ define(function() {
     };
 
     Hash2D.prototype.add = function(entity) {
-      if (entity.x > atom.width || entity.x < 0 || entity.y > atom.height || entity.y < 0) {
+      if (entity.x > this.wPixels || entity.x < 0 || entity.y > this.hPixels || entity.y < 0) {
 
       } else {
         this._obj[this.w * (entity.y >> this._size) + (entity.x >> this._size)].push(entity);
@@ -28,7 +28,7 @@ define(function() {
     };
 
     Hash2D.prototype.get = function(entity) {
-      if (entity.x > atom.width || entity.x < 0 || entity.y > atom.height || entity.y < 0) {
+      if (entity.x > this.wPixels || entity.x < 0 || entity.y > this.hPixels || entity.y < 0) {
         return [];
       } else {
         return this._obj[this.w * (entity.y >> this._size) + (entity.x >> this._size)];
@@ -41,7 +41,7 @@ define(function() {
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         a = _ref[_i];
         for (i = _j = 0, _ref1 = a.length; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-          a = null;
+          a[i] = null;
         }
       }
       return this;
@@ -49,17 +49,22 @@ define(function() {
 
     function Hash2D(params) {
       var k, v;
-      if ((params.w == null) || (params.h == null)) {
-        this.w = atom.width >> this._size;
-        this.h = atom.height >> this._size;
-        this.w++;
-        this.h++;
-        this._objLength = this.w * this.h;
-      }
       for (k in params) {
         v = params[k];
         this[k] = v;
       }
+      if ((this.w == null) || (this.h == null)) {
+        this.w = atom.width >> this._size;
+        this.h = atom.height >> this._size;
+        this.wPixels = this.w << this._size;
+        this.hPixels = this.h << this._size;
+        this.w++;
+        this.h++;
+      } else {
+        this.wPixels = this.w << this._size;
+        this.hPixels = this.h << this._size;
+      }
+      this._objLength = this.w * this.h;
       this.reset();
     }
 

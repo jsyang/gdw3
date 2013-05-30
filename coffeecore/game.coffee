@@ -2,7 +2,8 @@ define [
   'core/aifish'
   'core/bubble'
   'core/hook'
-], (AIFish, Bubble, Hook) ->
+  'core/hash2d'
+], (AIFish, Bubble, Hook, Hash2D) ->
     
   class FishGame extends atom.Game
     
@@ -56,18 +57,19 @@ define [
         })
       
       @entities.push(@player)
+      @hash2d = new Hash2D()
       
       @registerInputs()
-      @registerFocus()
+      #@registerFocus()
     
     registerInputs : ->
       atom.input.bind(atom.button.LEFT, 'mouseleft')
       atom.input.bind(atom.touch.TOUCHING, 'touchfinger')
     
-    registerFocus : ->
-      # make sure we don't waste them precious cycles.
-      window.onblur = => @stop
-      window.onfocus = => @run
+    #registerFocus : ->
+    #  # make sure we don't waste them precious cycles.
+    #  window.onblur = => @stop
+    #  window.onfocus = => @run
     
     addHook : (p) ->
       @entities.push(new Hook({
@@ -116,11 +118,13 @@ define [
     
     updateEntities : ->
       if @cycles > @clearEntitiesInterval
+        @hash2d.reset()
         newEntities = []
         (
           if e.move?
             e.move()
             newEntities.push(e)
+            
           else
             delete e.game
             
@@ -129,8 +133,11 @@ define [
         @cycles = 0
         
       else
+        @hash2d.nullify()
         (
-          if e.move? then e.move()
+          if e.move?
+            e.move()
+            @hash2d.add(e)
         ) for e in @entities
         @cycles++
         
