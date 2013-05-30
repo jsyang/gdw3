@@ -193,7 +193,7 @@ define(function() {
         _this.step();
         return setTimeout(function() {
           return _this.frameRequest = window.requestAnimationFrame(s);
-        }, 30);
+        }, 20);
       };
       this.last_step = Date.now();
       return this.frameRequest = window.requestAnimationFrame(s);

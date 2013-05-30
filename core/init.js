@@ -19,7 +19,8 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
   };
   atom.preloadImages({
     icon: 'icon.png',
-    fish: 'fish.jpg'
+    fish: 'fish.jpg',
+    bubble: 'b0_0.png'
   }, function() {
     loaded.gfx = true;
     return isPreloadComplete();
