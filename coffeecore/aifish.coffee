@@ -11,9 +11,9 @@ define ->
     # Defined in constructor
     lastPosition    : null
     speed           : null 
-    dSpeed          : $$.r(0.21)+0.13
+    dSpeed          : $$.r(0.41)+0.23
     maxSpeed        : $$.r(10)+2
-    fatnessPenalty  : 0.91
+    fatnessPenalty  : 0.987
     
     # Have we been hooked or bagged?
     caught        : false
@@ -53,8 +53,8 @@ define ->
     ]
   
     chase :
-      w_2   : 64 # half the width of the actual box
-      h_2   : 64
+      w_2   : 32 # half the width of the actual box
+      h_2   : 32
     
     target : atom.input.mouse
   
@@ -127,10 +127,10 @@ define ->
       @caught  = true
     
     eat : (e) ->
-      @w += e.r>>2
-      @h += e.r>>2
+      @w += $$.r(e.r>>2)
+      @h += $$.r(e.r>>2)
       @updateHitRadius()
-      @maxSpeed *= @fatnessPenalty
+      @dSpeed *= @fatnessPenalty
     
     draw : ->
       ac = atom.context

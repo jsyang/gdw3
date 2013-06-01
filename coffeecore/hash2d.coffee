@@ -6,7 +6,7 @@ define ->
     # h : null
     # _objLength : @w*@h
     
-    _size : 6 # 1<<6
+    _size : 7 # 1<<6
     
     reset : ->
       @_obj = ( [] for i in [0...@_objLength] )

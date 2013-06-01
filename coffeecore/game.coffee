@@ -10,6 +10,7 @@ define [
     
     cycles   : 0
     clearEntitiesInterval : 300 # how often do we try and clear out entities[]
+    clearHash2dInterval   : 60
     
     # flow of the water
     current  : -3
@@ -60,7 +61,8 @@ define [
         })
       
       @entities.push(@player)
-      @hash2d = new Hash2D()
+      @hash2d_new = new Hash2D()
+      @hash2d     = new Hash2D()
       
       @registerInputs()
       #@registerFocus()
@@ -136,12 +138,15 @@ define [
       return
     
     updateEntities : ->
+      
+    
       if @cycles > @clearEntitiesInterval
-        @hash2d.reset()
+        @hash2d_new.reset()
         newEntities = []
         (
           if e.move?
             e.move()
+            @hash2d_new.add(e)
             newEntities.push(e)
             
           else
@@ -152,14 +157,19 @@ define [
         @cycles = 0
         
       else
-        @hash2d.nullify()
+        @hash2d_new.nullify()
         (
           if e.move?
             e.move()
-            @hash2d.add(e)
+            @hash2d_new.add(e)
         ) for e in @entities
         @cycles++
-        
+      
+      
+      hash_old = @hash2d
+      @hash2d = @hash2d_new
+      @hash2d_new = hash_old
+      
       return
       
     draw : ->
