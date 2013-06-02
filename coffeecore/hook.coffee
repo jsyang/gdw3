@@ -3,11 +3,14 @@ define ->
     x : 0
     y : 0
     
+    hashable  : true
     caught    : false
     HOOKANGLE : 3.6185837
     
     draw : ->
       ac = atom.context
+      # FIXME: this is an incredibly expensive function
+      # Use sprites instead.
       
       ac.save()
       
@@ -17,12 +20,12 @@ define ->
       ac.translate(@x,@y)
       
       ac.beginPath()
-      ac.arc(0, 0, @r, 0, @HOOKANGLE);
-      ac.stroke()
+      #ac.arc(0, 0, @r, 0, @HOOKANGLE);
+      #ac.stroke()
       
-      ac.moveTo(@r, 0)
-      ac.quadraticCurveTo(@r*0.3, -@r*1.6, @r*0.3, -2*@r)
-      ac.stroke()
+      #ac.moveTo(@r, 0)
+      #ac.quadraticCurveTo(@r*0.3, -@r*1.6, @r*0.3, -2*@r)
+      #ac.stroke()
       
       ac.lineWidth                = 0.5
       ac.strokeStyle              = if @caught then '#622' else '#222'
@@ -57,7 +60,7 @@ define ->
     
     canHit : (e) ->
       switch e.constructor.name
-        when 'AIFish'
+        when 'Fish'
           true
         else
           false

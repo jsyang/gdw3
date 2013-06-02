@@ -1,16 +1,17 @@
 define [
-  'core/aifish'
+  'core/fish'
   'core/bubble'
   'core/hook'
   'core/hash2d'
   'core/plankton'
-], (AIFish, Bubble, Hook, Hash2D, Plankton) ->
+  'core/swarm'
+], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm) ->
     
   class FishGame extends atom.Game
     
-    cycles   : 0
+    cycles                : 0
+    cyclesPeriod          : 600
     clearEntitiesInterval : 300 # how often do we try and clear out entities[]
-    clearHash2dInterval   : 60
     
     # flow of the water
     current  : -3
@@ -21,7 +22,7 @@ define [
     
     constructor : ->
       makeFish = (point, chasePoint=false) =>
-        fish = new AIFish({
+        fish = new Fish({
           game    : @
           x       : point.x+$$.R(-120,120)
           y       : point.y+$$.R(-120,120)
@@ -51,7 +52,7 @@ define [
       
       @entities = @entities.concat(chaseMouse, chasePoint1, chasePoint2)
       
-      @player = new AIFish({
+      @player = new Fish({
           game : @
           x : $$.R(-120,120)
           y : $$.R(-120,120)
@@ -65,16 +66,16 @@ define [
       @hash2d     = new Hash2D()
       
       @registerInputs()
-      #@registerFocus()
+      @registerFocus()
     
     registerInputs : ->
       atom.input.bind(atom.button.LEFT, 'mouseleft')
       atom.input.bind(atom.touch.TOUCHING, 'touchfinger')
     
-    #registerFocus : ->
-    #  # make sure we don't waste them precious cycles.
-    #  window.onblur = => @stop
-    #  window.onfocus = => @run
+    registerFocus : ->
+      # make sure we don't waste them precious cycles.
+      window.onblur = => @stop
+      window.onfocus = => @run
     
     addPlankton : (p) ->
       @entities.push(new Plankton({
@@ -97,21 +98,35 @@ define [
         game  : @
       }))
       
-    update : (dt) ->
-      @mode[@mode.current].apply(@, [dt])
+    addSwarm : (p) ->
+      swarm = new Swarm({
+        x     : p.x
+        y     : p.y
+        game  : @
+      })
     
-    mode :
-      current : 'move'
+      swarmfish = (
+        (
+          new Fish({
+            game    : @
+            x       : p.x+$$.R(-64,64)
+            y       : p.y+$$.R(-64,64)
+            target  : swarm
+          })
+        ) for i in [0...$$.R(2,5)]
+      )
       
-      # Move the mouse around and make things follow you
-      move : (dt) ->
-        @updateEntities()
-        @intervalAddBubbles()
-        @intervalAddHooks()
-        @intervalAddPlankton()
-      
-        #if (atom.input.pressed('touchfinger') or atom.input.pressed('mouseleft'))
-        #  @addHook(atom.input.mouse)
+      swarm.add(swarmfish)
+      @entities.push(swarm)
+      @entities = @entities.concat(swarmfish)
+    
+    intervalAddSwarm : ->
+      if (@cycles+13) % 270 is 0
+        @addSwarm({
+          x : atom.width + $$.R(100, 200)
+          y : $$.R(20,atom.height-20)
+        })
+      return
     
     intervalAddPlankton : ->
       if (@cycles+7) % 120 is 0
@@ -138,17 +153,17 @@ define [
       return
     
     updateEntities : ->
+      @hash2d_new.reset()
       
-    
       if @cycles > @clearEntitiesInterval
-        @hash2d_new.reset()
         newEntities = []
         (
           if e.move?
             e.move()
-            @hash2d_new.add(e)
             newEntities.push(e)
-            
+            if e.hashable
+              @hash2d_new.add(e)
+
           else
             delete e.game
             
@@ -157,21 +172,35 @@ define [
         @cycles = 0
         
       else
-        @hash2d_new.nullify()
         (
           if e.move?
             e.move()
-            @hash2d_new.add(e)
+            if e.hashable
+              @hash2d_new.add(e)
         ) for e in @entities
         @cycles++
       
-      
+      # Switcheroo
       hash_old = @hash2d
       @hash2d = @hash2d_new
       @hash2d_new = hash_old
       
       return
       
+    update : (dt) ->
+      @mode[@mode.current].apply(@, [dt])
+    
+    mode :
+      current : 'move'
+      
+      # Move the mouse around and make things follow you
+      move : (dt) ->
+        @updateEntities()
+        @intervalAddBubbles()
+        @intervalAddHooks()
+        @intervalAddPlankton()
+        @intervalAddSwarm()
+      
     draw : ->
       atom.context.clear()
-      (if e.move? then e.draw()) for e in @entities
+      (if e.move? and e.draw? then e.draw()) for e in @entities

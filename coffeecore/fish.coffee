@@ -1,5 +1,5 @@
 define ->
-  class AIFish
+  class Fish
     
     x : 0
     y : 0
@@ -11,7 +11,7 @@ define ->
     # Defined in constructor
     lastPosition    : null
     speed           : null 
-    dSpeed          : $$.r(0.41)+0.23
+    dSpeed          : $$.r(0.31)+0.27
     maxSpeed        : $$.r(10)+2
     fatnessPenalty  : 0.987
     
@@ -21,29 +21,32 @@ define ->
     # Are we part of the player's posse?
     player        : false
     
+    # Hashable? Do we want to put this in the list of things to hittest?
+    hashable      : true
+    
     COLOR :
       HEX :
         # colors are unique to ability
-        pink    : '#ED3776'
-        purple  : '#B349AB'
-        blue    : '#4527F2'
-        cyan    : '#27C6F2'
-        teal    : '#27F2B5'
+        #pink    : '#ED3776'
+        #purple  : '#B349AB'
+        #blue    : '#4527F2'
+        #cyan    : '#27C6F2'
+        #teal    : '#27F2B5'
         green   : '#27F24C'
         leaf    : '#97F227'
-        grass   : '#D7F227'
-        orange  : '#F2A427'
+        #grass   : '#D7F227'
+        #orange  : '#F2A427'
         
       DISTRIB :
-        pink    : 1
-        purple  : 2
-        blue    : 4
-        cyan    : 6
-        teal    : 5
+        #pink    : 1
+        #purple  : 2
+        #blue    : 4
+        #cyan    : 6
+        #teal    : 5
         green   : 3
         leaf    : 2
-        grass   : 2
-        orange  : 1
+        #grass   : 2
+        #orange  : 1
         
     color : null
     
@@ -70,18 +73,23 @@ define ->
         
   
     setRotation : ->
-      newRotation = Math.atan(@speed.y/@speed.x)
-        
-      if @speed.x < 0
-        newRotation += Math.PI
-     
-      @rotation = newRotation
+      @rotation = Math.atan2(@speed.y, @speed.x)
+    
+    chaseTarget : ->
+      if @x > @target.x
+        @speed.x -= @dSpeed
+      else
+        @speed.x += @dSpeed
       
+      if @y > @target.y
+        @speed.y -= @dSpeed
+      else
+        @speed.y += @dSpeed
+    
     move : ->
       if @caught
         if @x < 0 or @y < 0
-          @move = null
-          @catcher = null
+          @remove()
         else
           @x = @catcher.x
           @y = @catcher.y
@@ -89,46 +97,36 @@ define ->
       else
         # todo : make it so something happens if player's fish dips out.. / is too slow to catch up
         # bonus for a spawning stage?
-        if @maxSpeed < Math.abs(@game.current)
-          @move = null
-          @catcher = null
+        if @player is false
+          @checkHits()
         
-        else
-          if @player is false
-            @checkHits()
-          
-          @x += @speed.x
-          @y += @speed.y
+        @x += @speed.x
+        @y += @speed.y
+      
+        @x += @game.current
         
-          @x += @game.current
-          
-          if @x > @target.x
-            @speed.x -= @dSpeed
-          else
-            @speed.x += @dSpeed
-          
-          if @y > @target.y
-            @speed.y -= @dSpeed
-          else
-            @speed.y += @dSpeed
-          
-          
-          @normalizeSpeed()
-          @setRotation()
+        @chaseTarget()
+        @normalizeSpeed()
+        @setRotation()
     
     recruit : ->
+      if @target.constructor.name == 'Swarm'
+        @target.children[@target.children.indexOf(@)] = null
+    
       # todo : extend this for further uses
       atom.playSound('recruit')
       @target = atom.input.mouse
       @player = true
+      
     
     hooked : (e) ->
       @catcher = e
       @caught  = true
     
     eat : (e) ->
-      @w += $$.r(e.r>>2)
-      @h += $$.r(e.r>>2)
+      growthFactor = $$.r(e.r>>2)
+      @w += growthFactor
+      @h += growthFactor
       @updateHitRadius()
       @dSpeed *= @fatnessPenalty
     
@@ -179,7 +177,7 @@ define ->
       
     canHit : (e) ->
       switch e.constructor.name
-        when 'AIFish'
+        when 'Fish'
           if @player then false else true
         else
           false
@@ -193,6 +191,10 @@ define ->
     updateHitRadius : ->
       @r2 = Math.min(@w,@h)
       @r2 *= @r2
+    
+    remove : ->
+      @move = null
+      @catcher = null
     
     constructor : (params) ->
       @[k] = v for k, v of params

@@ -6,7 +6,8 @@ define ->
     PI2 : Math.PI*2
     r   : 4
     
-    eaten   : false
+    eaten     : false
+    hashable  : true
     
     NOISES  :
       'plankton1' : 1
@@ -44,7 +45,7 @@ define ->
       
     canHit : (e) ->
       switch e.constructor.name
-        when 'AIFish'
+        when 'Fish'
           true
         else
           false

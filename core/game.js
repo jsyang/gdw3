@@ -2,7 +2,7 @@
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton'], function(AIFish, Bubble, Hook, Hash2D, Plankton) {
+define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton', 'core/swarm'], function(Fish, Bubble, Hook, Hash2D, Plankton, Swarm) {
   var FishGame;
   return FishGame = (function(_super) {
 
@@ -10,9 +10,9 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
 
     FishGame.prototype.cycles = 0;
 
-    FishGame.prototype.clearEntitiesInterval = 300;
+    FishGame.prototype.cyclesPeriod = 600;
 
-    FishGame.prototype.clearHash2dInterval = 60;
+    FishGame.prototype.clearEntitiesInterval = 300;
 
     FishGame.prototype.current = -3;
 
@@ -28,7 +28,7 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
         if (chasePoint == null) {
           chasePoint = false;
         }
-        fish = new AIFish({
+        fish = new Fish({
           game: _this,
           x: point.x + $$.R(-120, 120),
           y: point.y + $$.R(-120, 120),
@@ -77,7 +77,7 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
         return _results;
       })();
       this.entities = this.entities.concat(chaseMouse, chasePoint1, chasePoint2);
-      this.player = new AIFish({
+      this.player = new Fish({
         game: this,
         x: $$.R(-120, 120),
         y: $$.R(-120, 120),
@@ -89,11 +89,22 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
       this.hash2d_new = new Hash2D();
       this.hash2d = new Hash2D();
       this.registerInputs();
+      this.registerFocus();
     }
 
     FishGame.prototype.registerInputs = function() {
       atom.input.bind(atom.button.LEFT, 'mouseleft');
       return atom.input.bind(atom.touch.TOUCHING, 'touchfinger');
+    };
+
+    FishGame.prototype.registerFocus = function() {
+      var _this = this;
+      window.onblur = function() {
+        return _this.stop;
+      };
+      return window.onfocus = function() {
+        return _this.run;
+      };
     };
 
     FishGame.prototype.addPlankton = function(p) {
@@ -120,17 +131,37 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
       }));
     };
 
-    FishGame.prototype.update = function(dt) {
-      return this.mode[this.mode.current].apply(this, [dt]);
+    FishGame.prototype.addSwarm = function(p) {
+      var i, swarm, swarmfish;
+      swarm = new Swarm({
+        x: p.x,
+        y: p.y,
+        game: this
+      });
+      swarmfish = (function() {
+        var _i, _ref, _results;
+        _results = [];
+        for (i = _i = 0, _ref = $$.R(2, 5); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          _results.push(new Fish({
+            game: this,
+            x: p.x + $$.R(-64, 64),
+            y: p.y + $$.R(-64, 64),
+            target: swarm
+          }));
+        }
+        return _results;
+      }).call(this);
+      swarm.add(swarmfish);
+      this.entities.push(swarm);
+      return this.entities = this.entities.concat(swarmfish);
     };
 
-    FishGame.prototype.mode = {
-      current: 'move',
-      move: function(dt) {
-        this.updateEntities();
-        this.intervalAddBubbles();
-        this.intervalAddHooks();
-        return this.intervalAddPlankton();
+    FishGame.prototype.intervalAddSwarm = function() {
+      if ((this.cycles + 13) % 270 === 0) {
+        this.addSwarm({
+          x: atom.width + $$.R(100, 200),
+          y: $$.R(20, atom.height - 20)
+        });
       }
     };
 
@@ -175,16 +206,18 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
 
     FishGame.prototype.updateEntities = function() {
       var e, hash_old, newEntities, _i, _j, _len, _len1, _ref, _ref1;
+      this.hash2d_new.reset();
       if (this.cycles > this.clearEntitiesInterval) {
-        this.hash2d_new.reset();
         newEntities = [];
         _ref = this.entities;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           e = _ref[_i];
           if (e.move != null) {
             e.move();
-            this.hash2d_new.add(e);
             newEntities.push(e);
+            if (e.hashable) {
+              this.hash2d_new.add(e);
+            }
           } else {
             delete e.game;
           }
@@ -192,13 +225,14 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
         this.entities = newEntities;
         this.cycles = 0;
       } else {
-        this.hash2d_new.nullify();
         _ref1 = this.entities;
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           e = _ref1[_j];
           if (e.move != null) {
             e.move();
-            this.hash2d_new.add(e);
+            if (e.hashable) {
+              this.hash2d_new.add(e);
+            }
           }
         }
         this.cycles++;
@@ -208,6 +242,21 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
       this.hash2d_new = hash_old;
     };
 
+    FishGame.prototype.update = function(dt) {
+      return this.mode[this.mode.current].apply(this, [dt]);
+    };
+
+    FishGame.prototype.mode = {
+      current: 'move',
+      move: function(dt) {
+        this.updateEntities();
+        this.intervalAddBubbles();
+        this.intervalAddHooks();
+        this.intervalAddPlankton();
+        return this.intervalAddSwarm();
+      }
+    };
+
     FishGame.prototype.draw = function() {
       var e, _i, _len, _ref, _results;
       atom.context.clear();
@@ -215,7 +264,7 @@ define(['core/aifish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         e = _ref[_i];
-        _results.push(e.move != null ? e.draw() : void 0);
+        _results.push((e.move != null) && (e.draw != null) ? e.draw() : void 0);
       }
       return _results;
     };

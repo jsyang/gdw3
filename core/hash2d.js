@@ -4,7 +4,7 @@ define(function() {
   var Hash2D;
   return Hash2D = (function() {
 
-    Hash2D.prototype._size = 7;
+    Hash2D.prototype._size = 6;
 
     Hash2D.prototype.reset = function() {
       var i;
@@ -23,7 +23,12 @@ define(function() {
       if (entity.x > this.wPixels || entity.x < 0 || entity.y > this.hPixels || entity.y < 0) {
 
       } else {
-        this._obj[this.w * (entity.y >> this._size) + (entity.x >> this._size)].push(entity);
+        try {
+          this._obj[this.w * (entity.y >> this._size) + (entity.x >> this._size)].push(entity);
+        } catch (e) {
+          window.poo = entity;
+          throw "" + (entity.y >> this._size) + " -- x " + (entity.x >> this._size);
+        }
       }
       return this;
     };
@@ -55,12 +60,10 @@ define(function() {
         this[k] = v;
       }
       if (!(this.w != null) || !(this.h != null)) {
-        this.w = atom.width >> this._size;
-        this.h = atom.height >> this._size;
-        this.wPixels = this.w << this._size;
-        this.hPixels = this.h << this._size;
-        this.w++;
-        this.h++;
+        this.w = (atom.width >> this._size) + 1;
+        this.h = (atom.height >> this._size) + 1;
+        this.wPixels = atom.width;
+        this.hPixels = atom.height;
       } else {
         this.wPixels = this.w << this._size;
         this.hPixels = this.h << this._size;

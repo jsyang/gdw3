@@ -14,6 +14,8 @@ define(function() {
 
     Plankton.prototype.eaten = false;
 
+    Plankton.prototype.hashable = true;
+
     Plankton.prototype.NOISES = {
       'plankton1': 1,
       'plankton2': 1,
@@ -59,7 +61,7 @@ define(function() {
 
     Plankton.prototype.canHit = function(e) {
       switch (e.constructor.name) {
-        case 'AIFish':
+        case 'Fish':
           return true;
         default:
           return false;

@@ -192,9 +192,9 @@ define(function() {
       this.running = true;
       s = function() {
         _this.step();
-        return setTimeout(function() {
-          return _this.frameRequest = window.requestAnimationFrame(s);
-        }, 20);
+        return _this._frametimer = setTimeout(function() {
+          return _this.frameRequest = window.requestAnimationFrame(s, 20);
+        });
       };
       this.last_step = Date.now();
       return this.frameRequest = window.requestAnimationFrame(s);
@@ -204,6 +204,7 @@ define(function() {
       if (this.frameRequest) {
         cancelAnimationFrame(this.frameRequest);
       }
+      clearTimeout(this._frametimer);
       this.frameRequest = null;
       return this.running = false;
     };
@@ -332,9 +333,6 @@ define(function() {
     source.buffer = atom.sfx[name];
     source.connect(atom._mixer);
     source.noteOn(time);
-    if (track) {
-      atom._mixer._activeSounds.push(source);
-    }
     return source;
   };
   atom.stopAllSounds = function() {

@@ -3,6 +3,8 @@ define ->
     x : 0
     y : 0
     
+    hashable  : false
+    
     dx        : 0
     lifetime  : 0
     PI2       : 2*Math.PI

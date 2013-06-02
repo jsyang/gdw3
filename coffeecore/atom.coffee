@@ -171,14 +171,13 @@ define ->
         # Need this limiter here otherwise CPU climbs to 100%.
         # Browser is so fast that it requests a frame nearly every ms.
         # a la http://code.bytespider.eu/post/20484989272/requestanimationframe-and-html5-game-loops
-        setTimeout(=>
-          @frameRequest = window.requestAnimationFrame s
-        , 20)
+        @_frametimer = setTimeout(=> @frameRequest = window.requestAnimationFrame s, 20)
   
       @last_step = Date.now()
       @frameRequest = window.requestAnimationFrame s
     stop: ->
       cancelAnimationFrame @frameRequest if @frameRequest
+      clearTimeout(@_frametimer)
       @frameRequest = null
       @running = false
     step: ->
@@ -267,12 +266,8 @@ define ->
     source.connect atom._mixer
     source.noteOn time
     
-    # Clear the queue if nothing's playing
-    # FIXME: activeSourceCount is faulty!
-    #atom._mixer._activeSounds = [] if atom.audioContext.activeSourceCount is 0
-    
     # Keep track of active sounds.
-    atom._mixer._activeSounds.push(source) if track
+    #atom._mixer._activeSounds.push(source) if track
     
     source
     

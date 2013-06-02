@@ -8,6 +8,8 @@ define(function() {
 
     Bubble.prototype.y = 0;
 
+    Bubble.prototype.hashable = false;
+
     Bubble.prototype.dx = 0;
 
     Bubble.prototype.lifetime = 0;

@@ -8,6 +8,8 @@ define(function() {
 
     Hook.prototype.y = 0;
 
+    Hook.prototype.hashable = true;
+
     Hook.prototype.caught = false;
 
     Hook.prototype.HOOKANGLE = 3.6185837;
@@ -20,11 +22,6 @@ define(function() {
       ac.strokeStyle = this.caught ? '#611' : '#111';
       ac.translate(this.x, this.y);
       ac.beginPath();
-      ac.arc(0, 0, this.r, 0, this.HOOKANGLE);
-      ac.stroke();
-      ac.moveTo(this.r, 0);
-      ac.quadraticCurveTo(this.r * 0.3, -this.r * 1.6, this.r * 0.3, -2 * this.r);
-      ac.stroke();
       ac.lineWidth = 0.5;
       ac.strokeStyle = this.caught ? '#622' : '#222';
       ac.moveTo(this.r * 0.3, -2 * this.r);
@@ -64,7 +61,7 @@ define(function() {
 
     Hook.prototype.canHit = function(e) {
       switch (e.constructor.name) {
-        case 'AIFish':
+        case 'Fish':
           return true;
         default:
           return false;

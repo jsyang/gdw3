@@ -6,7 +6,7 @@ define ->
     # h : null
     # _objLength : @w*@h
     
-    _size : 7 # 1<<6
+    _size : 6 # 1<<6
     
     reset : ->
       @_obj = ( [] for i in [0...@_objLength] )
@@ -15,7 +15,11 @@ define ->
     add : (entity) ->
       if entity.x > @wPixels or entity.x < 0 or entity.y > @hPixels or entity.y < 0
       else
-        @_obj[@w*(entity.y>>@_size)+(entity.x>>@_size)].push(entity)
+        try
+          @_obj[@w*(entity.y>>@_size)+(entity.x>>@_size)].push(entity)
+        catch e
+          window.poo = entity
+          throw "#{entity.y>>@_size} -- x #{entity.x>>@_size}"
       @
     
     get : (entity) ->
@@ -34,12 +38,11 @@ define ->
       @[k] = v for k, v of params
       
       if !@w? or !@h?
-        @w = atom.width   >>@_size
-        @h = atom.height  >>@_size
-        @wPixels = @w<<@_size
-        @hPixels = @h<<@_size
-        @w++
-        @h++        
+        @w = (atom.width   >>@_size)+1
+        @h = (atom.height  >>@_size)+1
+        # Checks for what it intended to bound
+        @wPixels = atom.width
+        @hPixels = atom.height
       else
         @wPixels = @w<<@_size
         @hPixels = @h<<@_size
