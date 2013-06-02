@@ -22,14 +22,19 @@ define(function() {
 
     Fish.prototype.LASTFRAME = 7;
 
+    Fish.prototype.SPRITE = null;
+
+    Fish.prototype.SPRITENAME = null;
+
     Fish.prototype.GFX = {
-      SPRITE: 'fledgeling0',
-      W: 107,
-      H: 68,
-      W_2: 53,
-      H_2: 34,
-      W_4: 28,
-      H_4: 17
+      'fledgeling0': {
+        W: 28,
+        H: 17
+      },
+      'fledgeling1': {
+        W: 54,
+        H: 34
+      }
     };
 
     Fish.prototype.speed = null;
@@ -128,14 +133,15 @@ define(function() {
     };
 
     Fish.prototype.draw = function() {
-      var ac;
+      var ac, properties;
       ac = atom.context;
       ac.save();
       ac.translate(this.x, this.y);
       if (this.rotation !== 0) {
         ac.rotate(this.rotation);
       }
-      ac.drawImage(atom.gfx[this.GFX.SPRITE], 0, this.frame * this.GFX.H_4, this.GFX.W_4, this.GFX.H_4, -this.GFX.W_4 + 8, -this.GFX.H_4 >> 1, this.GFX.W_4, this.GFX.H_4);
+      properties = this.GFX[this.SPRITENAME];
+      ac.drawImage(this.SPRITE, 0, this.frame * properties.H, properties.W, properties.H, -properties.W + (properties.W >> 1), -properties.H >> 1, properties.W, properties.H);
       if (!this.caught) {
         if (this.framedelay % this.FRAMEDELAYMOD === 0) {
           this.framedelay = this.FRAMEDELAYMOD + 1;
@@ -184,7 +190,7 @@ define(function() {
     };
 
     Fish.prototype.updateHitRadius = function() {
-      this.r2 = Math.min(this.w, this.h);
+      this.r2 = this.GFX[this.SPRITENAME].W;
       return this.r2 *= this.r2;
     };
 
@@ -213,6 +219,8 @@ define(function() {
         this.maxSpeed = $$.r(8) + 4;
       }
       this.frame = $$.R(0, this.LASTFRAME);
+      this.SPRITENAME = "fledgeling" + ($$.R(0, 1));
+      this.SPRITE = atom.gfx[this.SPRITENAME];
       this.updateHitRadius();
     }
 

@@ -55,23 +55,13 @@ define ->
     
     draw : ->
       ac = atom.context
-      
-      #ac.strokeStyle = '#666'
-      #ac.fillStyle   = '#F5F36C'
-      #ac.beginPath()
-      #ac.arc(@x, @y, @r, 0, @PI2);
-      #ac.stroke()
-      #ac.fill()
-      #ac.closePath()
-      
-      @SPRITE = atom.gfx["#{@SPRITENAME}n#{@frame+1}"]
+      ac.save()
       properties = @GFX[@SPRITENAME]
-      ac.drawImage(@SPRITE, @x-(properties.W>>1), @y-(properties.H>>1))
+      ac.translate(@x-(properties.W>>1), @y-(properties.H>>1))
+      ac.rotate(@rotation)
+      ac.drawImage(@SPRITE, 0, 0)
+      ac.restore()
       
-      @frame++
-      if @frame > 1
-        @frame = 0
-        
     move : ->
       if @y < 0 or @x < 0 or @eaten
         @move = null
@@ -111,8 +101,9 @@ define ->
       @frame = $$.R(0,1)
       
       @SPRITENAME = "plankton#{s}"
-      @r    = @GFX[@SPRITENAME].W>>1
+      @SPRITE = atom.gfx["#{@SPRITENAME}n#{$$.R(1,2)}"]
+      @r    = @GFX[@SPRITENAME].W
       @r_2  = @r>>1
-      
       @r2   = @r*@r
-  
+      @rotation = $$.r(@PI2)
+      

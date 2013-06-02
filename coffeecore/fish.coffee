@@ -13,15 +13,15 @@ define ->
     frame : 0
     LASTFRAME : 7
     
+    SPRITE : null
+    SPRITENAME : null
     GFX :
-      SPRITE  : 'fledgeling0'
-      W       : 107
-      H       : 68
-      W_2     : 53
-      H_2     : 34
-          
-      W_4     : 28
-      H_4     : 17
+      'fledgeling0' :
+        W : 28
+        H : 17
+      'fledgeling1' :
+        W : 54
+        H : 34
     
     # Fish have a lifetime...
     # if they don't eat often enough they die
@@ -120,7 +120,9 @@ define ->
       ac.save()
       ac.translate(@x, @y)
       ac.rotate(@rotation) unless @rotation is 0
-      ac.drawImage(atom.gfx[@GFX.SPRITE], 0, @frame*@GFX.H_4, @GFX.W_4, @GFX.H_4, -@GFX.W_4+8, -@GFX.H_4>>1, @GFX.W_4, @GFX.H_4)
+      
+      properties = @GFX[@SPRITENAME]
+      ac.drawImage(@SPRITE, 0, @frame*properties.H, properties.W, properties.H, -properties.W+(properties.W>>1), -properties.H>>1, properties.W, properties.H)
       
       if !@caught
         if @framedelay % @FRAMEDELAYMOD is 0
@@ -156,7 +158,7 @@ define ->
       dx*dx + dy*dy < @r2+e.r2
     
     updateHitRadius : ->
-      @r2 = Math.min(@w,@h)
+      @r2 = @GFX[@SPRITENAME].W
       @r2 *= @r2
     
     remove : ->
@@ -177,10 +179,7 @@ define ->
       @maxSpeed = $$.r(8)+4       unless @maxSpeed?
       
       @frame = $$.R(0,@LASTFRAME)
-      #@lastPosition =
-      #  x : @x
-      #  y : @y
-      #
-      #@color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless @color?
+      @SPRITENAME = "fledgeling#{$$.R(0,1)}"
+      @SPRITE = atom.gfx[@SPRITENAME]
 
       @updateHitRadius()

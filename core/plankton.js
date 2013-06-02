@@ -78,13 +78,12 @@ define(function() {
     Plankton.prototype.draw = function() {
       var ac, properties;
       ac = atom.context;
-      this.SPRITE = atom.gfx["" + this.SPRITENAME + "n" + (this.frame + 1)];
+      ac.save();
       properties = this.GFX[this.SPRITENAME];
-      ac.drawImage(this.SPRITE, this.x - (properties.W >> 1), this.y - (properties.H >> 1));
-      this.frame++;
-      if (this.frame > 1) {
-        return this.frame = 0;
-      }
+      ac.translate(this.x - (properties.W >> 1), this.y - (properties.H >> 1));
+      ac.rotate(this.rotation);
+      ac.drawImage(this.SPRITE, 0, 0);
+      return ac.restore();
     };
 
     Plankton.prototype.move = function() {
@@ -137,9 +136,11 @@ define(function() {
       s = $$.R(1, 11);
       this.frame = $$.R(0, 1);
       this.SPRITENAME = "plankton" + s;
-      this.r = this.GFX[this.SPRITENAME].W >> 1;
+      this.SPRITE = atom.gfx["" + this.SPRITENAME + "n" + ($$.R(1, 2))];
+      this.r = this.GFX[this.SPRITENAME].W;
       this.r_2 = this.r >> 1;
       this.r2 = this.r * this.r;
+      this.rotation = $$.r(this.PI2);
     }
 
     return Plankton;
