@@ -8,11 +8,13 @@ define ->
     
     rotation  : 0
     
+    framedelay    : 0
+    FRAMEDELAYMOD : 2
     frame : 0
     LASTFRAME : 7
     
     GFX :
-      SPRITE  : 'fledgeling'
+      SPRITE  : 'fledgeling0'
       W       : 107
       H       : 68
       W_2     : 53
@@ -118,12 +120,16 @@ define ->
       ac.save()
       ac.translate(@x, @y)
       ac.rotate(@rotation) unless @rotation is 0
-      ac.drawImage(atom.gfx[@GFX.SPRITE], 0, @frame*@GFX.H, @GFX.W, @GFX.H, -@GFX.W_4+8, -@GFX.H_4>>1, @GFX.W_4, @GFX.H_4)
+      ac.drawImage(atom.gfx[@GFX.SPRITE], 0, @frame*@GFX.H_4, @GFX.W_4, @GFX.H_4, -@GFX.W_4+8, -@GFX.H_4>>1, @GFX.W_4, @GFX.H_4)
       
       if !@caught
-        @frame++
-        if @frame > @LASTFRAME
-          @frame = 0
+        if @framedelay % @FRAMEDELAYMOD is 0
+          @framedelay = @FRAMEDELAYMOD+1
+          @frame++
+          if @frame > @LASTFRAME
+            @frame = 0
+        else
+          @framedelay++
         
       ac.restore()
     

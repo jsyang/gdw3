@@ -10,45 +10,57 @@ define(function() {
 
     Bubble.prototype.hashable = false;
 
+    Bubble.prototype.SPRITENAME = null;
+
+    Bubble.prototype.SPRITE = null;
+
+    Bubble.prototype.GFX = {
+      'bubble0': {
+        W: 31,
+        H: 27,
+        W_2: 15,
+        H_2: 13
+      },
+      'bubble1': {
+        W: 19,
+        H: 16,
+        W_2: 9,
+        H_2: 8
+      }
+    };
+
     Bubble.prototype.dx = 0;
 
     Bubble.prototype.lifetime = 0;
 
-    Bubble.prototype.PI2 = 2 * Math.PI;
-
     Bubble.prototype.draw = function() {
       var ac;
       ac = atom.context;
-      ac.globalAlpha = 0.5;
-      ac.fillStyle = '#A2CBF5';
-      ac.beginPath();
-      ac.arc(this.x - this.r_2 + this.dx, this.y - this.r_2, this.r, 0, this.PI2);
-      ac.closePath();
-      ac.fill();
+      ac.globalAlpha = 0.6;
+      ac.drawImage(this.SPRITE, this.x - this.GFX[this.SPRITENAME].W_2, this.y - this.GFX[this.SPRITENAME].W_2);
       return ac.globalAlpha = 1;
     };
 
     Bubble.prototype.move = function() {
-      if (this.y < -this.r_2 || this.x < -this.r_2) {
+      if (this.y < -this.GFX[this.SPRITENAME].H_2 || this.x < -this.GFX[this.SPRITENAME].W_2) {
         return this.move = null;
       } else {
         this.y += this.dy;
-        this.x += 4 * this.game.current;
-        this.dx = this.dxAmplitude * Math.sin(this.lifetime);
-        return this.lifetime += 0.2;
+        return this.x += 4 * this.game.current;
       }
     };
 
     function Bubble(params) {
-      var k, v;
+      var k, n, s, v;
       for (k in params) {
         v = params[k];
         this[k] = v;
       }
-      this.r = $$.R(1, 5) + $$.r(5);
-      this.r_2 = this.r >> 1;
+      s = $$.R(0, 1);
+      n = $$.R(1, 6);
+      this.SPRITE = atom.gfx["bubble" + s + "n" + n];
+      this.SPRITENAME = "bubble" + s;
       this.dy = -$$.r(2.9) - 0.85;
-      this.dxAmplitude = $$.r(3) + 1;
     }
 
     return Bubble;

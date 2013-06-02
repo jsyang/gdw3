@@ -14,12 +14,16 @@ define(function() {
 
     Fish.prototype.rotation = 0;
 
+    Fish.prototype.framedelay = 0;
+
+    Fish.prototype.FRAMEDELAYMOD = 2;
+
     Fish.prototype.frame = 0;
 
     Fish.prototype.LASTFRAME = 7;
 
     Fish.prototype.GFX = {
-      SPRITE: 'fledgeling',
+      SPRITE: 'fledgeling0',
       W: 107,
       H: 68,
       W_2: 53,
@@ -131,11 +135,16 @@ define(function() {
       if (this.rotation !== 0) {
         ac.rotate(this.rotation);
       }
-      ac.drawImage(atom.gfx[this.GFX.SPRITE], 0, this.frame * this.GFX.H, this.GFX.W, this.GFX.H, -this.GFX.W_4 + 8, -this.GFX.H_4 >> 1, this.GFX.W_4, this.GFX.H_4);
+      ac.drawImage(atom.gfx[this.GFX.SPRITE], 0, this.frame * this.GFX.H_4, this.GFX.W_4, this.GFX.H_4, -this.GFX.W_4 + 8, -this.GFX.H_4 >> 1, this.GFX.W_4, this.GFX.H_4);
       if (!this.caught) {
-        this.frame++;
-        if (this.frame > this.LASTFRAME) {
-          this.frame = 0;
+        if (this.framedelay % this.FRAMEDELAYMOD === 0) {
+          this.framedelay = this.FRAMEDELAYMOD + 1;
+          this.frame++;
+          if (this.frame > this.LASTFRAME) {
+            this.frame = 0;
+          }
+        } else {
+          this.framedelay++;
         }
       }
       return ac.restore();
