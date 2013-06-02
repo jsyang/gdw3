@@ -8,6 +8,19 @@ define ->
     
     rotation  : 0
     
+    frame : 0
+    LASTFRAME : 7
+    
+    GFX :
+      SPRITE  : 'fledgeling'
+      W       : 107
+      H       : 68
+      W_2     : 53
+      H_2     : 34
+          
+      W_4     : 28
+      H_4     : 17
+    
     # Fish have a lifetime...
     # if they don't eat often enough they die
     # larger fish need to eat more often
@@ -15,7 +28,6 @@ define ->
     # lifetime : 0
     
     # Defined in constructor
-    lastPosition    : null
     speed           : null 
     dSpeed          : $$.r(0.31)+0.27
     maxSpeed        : $$.r(10)+2
@@ -29,37 +41,6 @@ define ->
     
     # Hashable? Do we want to put this in the list of things to hittest?
     hashable      : true
-    
-    COLOR :
-      HEX :
-        # colors are unique to ability
-        #pink    : '#ED3776'
-        #purple  : '#B349AB'
-        #blue    : '#4527F2'
-        #cyan    : '#27C6F2'
-        #teal    : '#27F2B5'
-        green   : '#27F24C'
-        leaf    : '#97F227'
-        #grass   : '#D7F227'
-        #orange  : '#F2A427'
-        
-      DISTRIB :
-        #pink    : 1
-        #purple  : 2
-        #blue    : 4
-        #cyan    : 6
-        #teal    : 5
-        green   : 3
-        leaf    : 2
-        #grass   : 2
-        #orange  : 1
-        
-    color : null
-    
-    gradient : [
-      [0.2, '#6D59B3']
-      [0.8, '#484063']
-    ]
   
     chase :
       w_2   : 32 # half the width of the actual box
@@ -130,46 +111,20 @@ define ->
       @caught  = true
     
     eat : (e) ->
-      growthFactor = $$.r(e.r>>2)
-      @w += growthFactor
-      @h += growthFactor
-      @updateHitRadius()
       @dSpeed *= @fatnessPenalty
     
     draw : ->
       ac = atom.context
       ac.save()
       ac.translate(@x, @y)
-      
       ac.rotate(@rotation) unless @rotation is 0
+      ac.drawImage(atom.gfx[@GFX.SPRITE], 0, @frame*@GFX.H, @GFX.W, @GFX.H, -@GFX.W_4+8, -@GFX.H_4>>1, @GFX.W_4, @GFX.H_4)
       
-      if false
-        g = ac.createLinearGradient(-@w*0.2,0,@w*0.8,0)
-        (
-          g.addColorStop(i[0], i[1])
-          i[0] -= 0.0313
-          if i[0] < 0
-            i[0] = 1
-        ) for i in @gradient
-      else
-        g = @color
-      
-      ac.fillStyle = g
-      
-      ac.beginPath()
-      # higher ratio means more exaggeration
-      ac.moveTo(-(@w*0.2),-(@h>>1))
-      ac.lineTo(-(@w*0.2), (@h>>1))
-      ac.lineTo( (@w*0.8), 0)
-      ac.moveTo(-(@w*0.2), (@h>>1))
-      ac.lineTo( (@w*0.8), 0)
-      ac.closePath()
-      ac.stroke()
-      ac.fill()
-      
-      #ac.fillStyle = '#000'
-      #ac.fillRect(-1,-1,2,2) # pivot point
-      
+      if !@caught
+        @frame++
+        if @frame > @LASTFRAME
+          @frame = 0
+        
       ac.restore()
     
     checkHits : ->
@@ -215,10 +170,11 @@ define ->
       @dSpeed   = $$.r(0.12)+0.13 unless @dSpeed?
       @maxSpeed = $$.r(8)+4       unless @maxSpeed?
       
-      @lastPosition =
-        x : @x
-        y : @y
-
-      @color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless @color?
+      @frame = $$.R(0,@LASTFRAME)
+      #@lastPosition =
+      #  x : @x
+      #  y : @y
+      #
+      #@color = @COLOR.HEX[$$.WR(@COLOR.DISTRIB)] unless @color?
 
       @updateHitRadius()

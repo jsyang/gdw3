@@ -14,7 +14,19 @@ define(function() {
 
     Fish.prototype.rotation = 0;
 
-    Fish.prototype.lastPosition = null;
+    Fish.prototype.frame = 0;
+
+    Fish.prototype.LASTFRAME = 7;
+
+    Fish.prototype.GFX = {
+      SPRITE: 'fledgeling',
+      W: 107,
+      H: 68,
+      W_2: 53,
+      H_2: 34,
+      W_4: 28,
+      H_4: 17
+    };
 
     Fish.prototype.speed = null;
 
@@ -29,21 +41,6 @@ define(function() {
     Fish.prototype.player = false;
 
     Fish.prototype.hashable = true;
-
-    Fish.prototype.COLOR = {
-      HEX: {
-        green: '#27F24C',
-        leaf: '#97F227'
-      },
-      DISTRIB: {
-        green: 3,
-        leaf: 2
-      }
-    };
-
-    Fish.prototype.color = null;
-
-    Fish.prototype.gradient = [[0.2, '#6D59B3'], [0.8, '#484063']];
 
     Fish.prototype.chase = {
       w_2: 32,
@@ -123,46 +120,24 @@ define(function() {
     };
 
     Fish.prototype.eat = function(e) {
-      var growthFactor;
-      growthFactor = $$.r(e.r >> 2);
-      this.w += growthFactor;
-      this.h += growthFactor;
-      this.updateHitRadius();
       return this.dSpeed *= this.fatnessPenalty;
     };
 
     Fish.prototype.draw = function() {
-      var ac, g, i, _i, _len, _ref;
+      var ac;
       ac = atom.context;
       ac.save();
       ac.translate(this.x, this.y);
       if (this.rotation !== 0) {
         ac.rotate(this.rotation);
       }
-      if (false) {
-        g = ac.createLinearGradient(-this.w * 0.2, 0, this.w * 0.8, 0);
-        _ref = this.gradient;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          i = _ref[_i];
-          g.addColorStop(i[0], i[1]);
-          i[0] -= 0.0313;
-          if (i[0] < 0) {
-            i[0] = 1;
-          }
+      ac.drawImage(atom.gfx[this.GFX.SPRITE], 0, this.frame * this.GFX.H, this.GFX.W, this.GFX.H, -this.GFX.W_4 + 8, -this.GFX.H_4 >> 1, this.GFX.W_4, this.GFX.H_4);
+      if (!this.caught) {
+        this.frame++;
+        if (this.frame > this.LASTFRAME) {
+          this.frame = 0;
         }
-      } else {
-        g = this.color;
       }
-      ac.fillStyle = g;
-      ac.beginPath();
-      ac.moveTo(-(this.w * 0.2), -(this.h >> 1));
-      ac.lineTo(-(this.w * 0.2), this.h >> 1);
-      ac.lineTo(this.w * 0.8, 0);
-      ac.moveTo(-(this.w * 0.2), this.h >> 1);
-      ac.lineTo(this.w * 0.8, 0);
-      ac.closePath();
-      ac.stroke();
-      ac.fill();
       return ac.restore();
     };
 
@@ -228,13 +203,7 @@ define(function() {
       if (this.maxSpeed == null) {
         this.maxSpeed = $$.r(8) + 4;
       }
-      this.lastPosition = {
-        x: this.x,
-        y: this.y
-      };
-      if (this.color == null) {
-        this.color = this.COLOR.HEX[$$.WR(this.COLOR.DISTRIB)];
-      }
+      this.frame = $$.R(0, this.LASTFRAME);
       this.updateHitRadius();
     }
 
