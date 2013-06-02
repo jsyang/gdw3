@@ -8,6 +8,12 @@ define ->
     
     rotation  : 0
     
+    # Fish have a lifetime...
+    # if they don't eat often enough they die
+    # larger fish need to eat more often
+    
+    # lifetime : 0
+    
     # Defined in constructor
     lastPosition    : null
     speed           : null 

@@ -14,78 +14,36 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
 
     FishGame.prototype.clearEntitiesInterval = 300;
 
-    FishGame.prototype.current = -3;
+    FishGame.prototype.current = -1.6;
 
     FishGame.prototype.player = null;
 
     FishGame.prototype.entities = [];
 
     function FishGame() {
-      var chaseMouse, chasePoint1, chasePoint2, i, makeFish, p1, p2, p3,
+      var i, makeFish, p3,
         _this = this;
-      makeFish = function(point, chasePoint) {
+      makeFish = function(p) {
         var fish;
-        if (chasePoint == null) {
-          chasePoint = false;
-        }
-        fish = new Fish({
+        return fish = new Fish({
           game: _this,
-          x: point.x + $$.R(-120, 120),
-          y: point.y + $$.R(-120, 120),
+          x: p.x + $$.R(-120, 120),
+          y: p.y + $$.R(-120, 120),
           player: true
         });
-        if (chasePoint === true) {
-          fish.target = point;
-          fish.player = false;
-        }
-        return fish;
-      };
-      p1 = {
-        x: $$.R(100, 300),
-        y: 50
-      };
-      p2 = {
-        x: $$.R(100, 300),
-        y: 450
       };
       p3 = {
         x: $$.R(200, 400),
         y: 200
       };
-      chaseMouse = (function() {
+      this.entities = this.entities.concat((function() {
         var _i, _results;
         _results = [];
         for (i = _i = 0; _i < 3; i = ++_i) {
           _results.push(makeFish(p3));
         }
         return _results;
-      })();
-      chasePoint1 = (function() {
-        var _i, _results;
-        _results = [];
-        for (i = _i = 0; _i < 3; i = ++_i) {
-          _results.push(makeFish(p1, true));
-        }
-        return _results;
-      })();
-      chasePoint2 = (function() {
-        var _i, _results;
-        _results = [];
-        for (i = _i = 0; _i < 3; i = ++_i) {
-          _results.push(makeFish(p2, true));
-        }
-        return _results;
-      })();
-      this.entities = this.entities.concat(chaseMouse, chasePoint1, chasePoint2);
-      this.player = new Fish({
-        game: this,
-        x: $$.R(-120, 120),
-        y: $$.R(-120, 120),
-        w: 24,
-        h: 20,
-        maxSpeed: 9
-      });
-      this.entities.push(this.player);
+      })());
       this.hash2d_new = new Hash2D();
       this.hash2d = new Hash2D();
       this.registerInputs();
@@ -141,7 +99,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       swarmfish = (function() {
         var _i, _ref, _results;
         _results = [];
-        for (i = _i = 0, _ref = $$.R(2, 5); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        for (i = _i = 0, _ref = $$.R(1, 3); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           _results.push(new Fish({
             game: this,
             x: p.x + $$.R(-64, 64),
@@ -157,7 +115,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     };
 
     FishGame.prototype.intervalAddSwarm = function() {
-      if ((this.cycles + 13) % 270 === 0) {
+      if ((this.cycles + 13) % 270 === 0 && $$.r() < 0.3) {
         this.addSwarm({
           x: atom.width + $$.R(100, 200),
           y: $$.R(20, atom.height - 20)

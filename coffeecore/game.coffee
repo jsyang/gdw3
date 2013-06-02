@@ -14,54 +14,27 @@ define [
     clearEntitiesInterval : 300 # how often do we try and clear out entities[]
     
     # flow of the water
-    current  : -3
+    current  : -1.6
     
     player   : null
     entities : []
     
     
     constructor : ->
-      makeFish = (point, chasePoint=false) =>
+      makeFish = (p) =>
         fish = new Fish({
           game    : @
-          x       : point.x+$$.R(-120,120)
-          y       : point.y+$$.R(-120,120)
+          x       : p.x+$$.R(-120,120)
+          y       : p.y+$$.R(-120,120)
           player  : true
         })
-        
-        if chasePoint is true
-          fish.target = point
-          fish.player = false
-        fish
-      
-      p1 =
-        x : $$.R(100,300)
-        y : 50
-      
-      p2 =
-        x : $$.R(100,300)
-        y : 450
         
       p3 =
         x : $$.R(200,400)
         y : 200
         
-      chaseMouse = (makeFish(p3) for i in [0...3])
-      chasePoint1 = (makeFish(p1, true) for i in [0...3])
-      chasePoint2 = (makeFish(p2, true) for i in [0...3])
+      @entities = @entities.concat((makeFish(p3) for i in [0...3]))
       
-      @entities = @entities.concat(chaseMouse, chasePoint1, chasePoint2)
-      
-      @player = new Fish({
-          game : @
-          x : $$.R(-120,120)
-          y : $$.R(-120,120)
-          w : 24
-          h : 20
-          maxSpeed : 9
-        })
-      
-      @entities.push(@player)
       @hash2d_new = new Hash2D()
       @hash2d     = new Hash2D()
       
@@ -113,7 +86,7 @@ define [
             y       : p.y+$$.R(-64,64)
             target  : swarm
           })
-        ) for i in [0...$$.R(2,5)]
+        ) for i in [0...$$.R(1,3)]
       )
       
       swarm.add(swarmfish)
@@ -121,7 +94,8 @@ define [
       @entities = @entities.concat(swarmfish)
     
     intervalAddSwarm : ->
-      if (@cycles+13) % 270 is 0
+      # Swarms are rare.
+      if (@cycles+13) % 270 is 0 and $$.r() < 0.3
         @addSwarm({
           x : atom.width + $$.R(100, 200)
           y : $$.R(20,atom.height-20)
