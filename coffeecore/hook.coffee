@@ -9,31 +9,12 @@ define ->
     
     draw : ->
       ac = atom.context
-      # FIXME: this is an incredibly expensive function
-      # Use sprites instead.
-      
-      ac.save()
-      
-      ac.lineWidth                = @r*0.25
-      ac.strokeStyle              = if @caught then '#611' else '#111'
-      
-      ac.translate(@x,@y)
-      
       ac.beginPath()
-      #ac.arc(0, 0, @r, 0, @HOOKANGLE);
-      #ac.stroke()
-      
-      #ac.moveTo(@r, 0)
-      #ac.quadraticCurveTo(@r*0.3, -@r*1.6, @r*0.3, -2*@r)
-      #ac.stroke()
-      
       ac.lineWidth                = 0.5
-      ac.strokeStyle              = if @caught then '#622' else '#222'
-      ac.moveTo(@r*0.3, -2*@r)
-      ac.lineTo(@r*0.3, -@y)
+      ac.strokeStyle              = if @caught then '#a44' else '#444'
+      ac.moveTo(@x, @y)
+      ac.lineTo(@x, 0)
       ac.stroke()
-      
-      ac.restore()
         
     move : ->
       if @y < -@r_2 or @x < -@r_2

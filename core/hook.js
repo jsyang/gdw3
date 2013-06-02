@@ -17,17 +17,12 @@ define(function() {
     Hook.prototype.draw = function() {
       var ac;
       ac = atom.context;
-      ac.save();
-      ac.lineWidth = this.r * 0.25;
-      ac.strokeStyle = this.caught ? '#611' : '#111';
-      ac.translate(this.x, this.y);
       ac.beginPath();
       ac.lineWidth = 0.5;
-      ac.strokeStyle = this.caught ? '#622' : '#222';
-      ac.moveTo(this.r * 0.3, -2 * this.r);
-      ac.lineTo(this.r * 0.3, -this.y);
-      ac.stroke();
-      return ac.restore();
+      ac.strokeStyle = this.caught ? '#a44' : '#444';
+      ac.moveTo(this.x, this.y);
+      ac.lineTo(this.x, 0);
+      return ac.stroke();
     };
 
     Hook.prototype.move = function() {

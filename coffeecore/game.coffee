@@ -14,7 +14,7 @@ define [
     clearEntitiesInterval : 300 # how often do we try and clear out entities[]
     
     # flow of the water
-    current  : -1.6
+    current  : -1.9
     
     player   : null
     entities : []
@@ -169,7 +169,43 @@ define [
         @intervalAddHooks()
         @intervalAddPlankton()
         @intervalAddSwarm()
+    
+    BG :
+      SURFACE :
+        sprite : 'surface'
+        x : 0
+        w : 500
+        h : -100
+        rate : 0.18
+      SEAFLOOR1 :
+        sprite : 'seafloor1'
+        x : 0
+        w : 500
+        h : 200
+        rate : 0.58
+      SEAFLOOR2 :
+        sprite : 'seafloor2'
+        x : 0
+        w : 500
+        h : 100
+        rate : 0.97
+    
+    drawSeaFloor : (sf) ->
+      ac = atom.context
+      
+      (
+        ac.drawImage(atom.gfx[sf.sprite], sf.x+500*i, if sf.h>0 then atom.height-sf.h else 0)
+      ) for i in [-1..(atom.width*0.002)>>0]
+      
+      sf.x += sf.rate*@current
+      if sf.x<0
+        sf.x = 500
+      return
       
     draw : ->
       atom.context.clear()
+      @drawSeaFloor(@BG.SURFACE)
+      @drawSeaFloor(@BG.SEAFLOOR1)
+      @drawSeaFloor(@BG.SEAFLOOR2)
       (if e.move? and e.draw? then e.draw()) for e in @entities
+      

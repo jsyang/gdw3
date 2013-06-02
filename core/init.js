@@ -22,18 +22,13 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     icon: 'icon.png',
     fledgeling0: 'fledgeling0.png',
     fledgeling1: 'fledgeling1.png',
-    bubble0n1: 'bubble0/1.png',
-    bubble0n2: 'bubble0/2.png',
-    bubble0n3: 'bubble0/3.png',
-    bubble0n4: 'bubble0/4.png',
-    bubble0n5: 'bubble0/5.png',
-    bubble0n6: 'bubble0/6.png',
-    bubble1n1: 'bubble1/1.png',
-    bubble1n2: 'bubble1/2.png',
-    bubble1n3: 'bubble1/3.png',
-    bubble1n4: 'bubble1/4.png',
-    bubble1n5: 'bubble1/5.png',
-    bubble1n6: 'bubble1/6.png',
+    bubble4: 'bubble/4.png',
+    bubble6: 'bubble/6.png',
+    bubble8: 'bubble/8.png',
+    bubble12: 'bubble/12.png',
+    bubble16: 'bubble/16.png',
+    bubble24: 'bubble/24.png',
+    bubble32: 'bubble/32.png',
     plankton1n1: 'plankton1/1.png',
     plankton1n2: 'plankton1/2.png',
     plankton2n1: 'plankton2/1.png',
@@ -55,7 +50,10 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     plankton10n1: 'plankton10/1.png',
     plankton10n2: 'plankton10/2.png',
     plankton11n1: 'plankton11/1.png',
-    plankton11n2: 'plankton11/2.png'
+    plankton11n2: 'plankton11/2.png',
+    surface: 'surface.png',
+    seafloor1: 'seafloor1.png',
+    seafloor2: 'seafloor2.png'
   }, function() {
     loaded.gfx = true;
     return isPreloadComplete();

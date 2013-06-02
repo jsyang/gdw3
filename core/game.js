@@ -14,7 +14,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
 
     FishGame.prototype.clearEntitiesInterval = 300;
 
-    FishGame.prototype.current = -1.6;
+    FishGame.prototype.current = -1.9;
 
     FishGame.prototype.player = null;
 
@@ -205,9 +205,48 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       }
     };
 
+    FishGame.prototype.BG = {
+      SURFACE: {
+        sprite: 'surface',
+        x: 0,
+        w: 500,
+        h: -100,
+        rate: 0.18
+      },
+      SEAFLOOR1: {
+        sprite: 'seafloor1',
+        x: 0,
+        w: 500,
+        h: 200,
+        rate: 0.58
+      },
+      SEAFLOOR2: {
+        sprite: 'seafloor2',
+        x: 0,
+        w: 500,
+        h: 100,
+        rate: 0.97
+      }
+    };
+
+    FishGame.prototype.drawSeaFloor = function(sf) {
+      var ac, i, _i, _ref;
+      ac = atom.context;
+      for (i = _i = -1, _ref = (atom.width * 0.002) >> 0; -1 <= _ref ? _i <= _ref : _i >= _ref; i = -1 <= _ref ? ++_i : --_i) {
+        ac.drawImage(atom.gfx[sf.sprite], sf.x + 500 * i, sf.h > 0 ? atom.height - sf.h : 0);
+      }
+      sf.x += sf.rate * this.current;
+      if (sf.x < 0) {
+        sf.x = 500;
+      }
+    };
+
     FishGame.prototype.draw = function() {
       var e, _i, _len, _ref, _results;
       atom.context.clear();
+      this.drawSeaFloor(this.BG.SURFACE);
+      this.drawSeaFloor(this.BG.SEAFLOOR1);
+      this.drawSeaFloor(this.BG.SEAFLOOR2);
       _ref = this.entities;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
