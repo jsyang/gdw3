@@ -16,6 +16,59 @@ define(function() {
 
     Plankton.prototype.hashable = true;
 
+    Plankton.prototype.frame = 0;
+
+    Plankton.prototype.SPRITE = null;
+
+    Plankton.prototype.SPRITENAME = null;
+
+    Plankton.prototype.GFX = {
+      'plankton1': {
+        W: 33,
+        H: 19
+      },
+      'plankton2': {
+        W: 22,
+        H: 26
+      },
+      'plankton3': {
+        W: 14,
+        H: 23
+      },
+      'plankton4': {
+        W: 21,
+        H: 27
+      },
+      'plankton5': {
+        W: 27,
+        H: 27
+      },
+      'plankton6': {
+        W: 20,
+        H: 23
+      },
+      'plankton7': {
+        W: 26,
+        H: 24
+      },
+      'plankton8': {
+        W: 24,
+        H: 23
+      },
+      'plankton9': {
+        W: 21,
+        H: 32
+      },
+      'plankton10': {
+        W: 30,
+        H: 36
+      },
+      'plankton11': {
+        W: 33,
+        H: 28
+      }
+    };
+
     Plankton.prototype.NOISES = {
       'plankton1': 1,
       'plankton2': 1,
@@ -23,15 +76,15 @@ define(function() {
     };
 
     Plankton.prototype.draw = function() {
-      var ac;
+      var ac, properties;
       ac = atom.context;
-      ac.strokeStyle = '#666';
-      ac.fillStyle = '#F5F36C';
-      ac.beginPath();
-      ac.arc(this.x, this.y, this.r, 0, this.PI2);
-      ac.stroke();
-      ac.fill();
-      return ac.closePath();
+      this.SPRITE = atom.gfx["" + this.SPRITENAME + "n" + (this.frame + 1)];
+      properties = this.GFX[this.SPRITENAME];
+      ac.drawImage(this.SPRITE, this.x - (properties.W >> 1), this.y - (properties.H >> 1));
+      this.frame++;
+      if (this.frame > 1) {
+        return this.frame = 0;
+      }
     };
 
     Plankton.prototype.move = function() {
@@ -76,12 +129,15 @@ define(function() {
     };
 
     function Plankton(params) {
-      var k, v;
+      var k, s, v;
       for (k in params) {
         v = params[k];
         this[k] = v;
       }
-      this.r = $$.R(2, 12);
+      s = $$.R(1, 11);
+      this.frame = $$.R(0, 1);
+      this.SPRITENAME = "plankton" + s;
+      this.r = this.GFX[this.SPRITENAME].W >> 1;
       this.r_2 = this.r >> 1;
       this.r2 = this.r * this.r;
     }
