@@ -36,7 +36,9 @@ define(function() {
     Bubble.prototype.draw = function() {
       var ac;
       ac = atom.context;
-      return ac.drawImage(this.SPRITE, this.x - this.GFX[this.SPRITENAME].W_2, this.y - this.GFX[this.SPRITENAME].W_2);
+      ac.globalAlpha = 0.6;
+      ac.drawImage(this.SPRITE, this.x - this.GFX[this.SPRITENAME].W_2, this.y - this.GFX[this.SPRITENAME].W_2);
+      return ac.globalAlpha = 1;
     };
 
     Bubble.prototype.move = function() {

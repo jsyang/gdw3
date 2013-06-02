@@ -163,38 +163,28 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     };
 
     FishGame.prototype.updateEntities = function() {
-      var e, hash_old, newEntities, _i, _j, _len, _len1, _ref, _ref1;
+      var e, hash_old, newEntities, _i, _len, _ref;
       this.hash2d_new.reset();
       if (this.cycles > this.clearEntitiesInterval) {
-        newEntities = [];
-        _ref = this.entities;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          e = _ref[_i];
-          if (e.move != null) {
-            e.move();
-            newEntities.push(e);
-            if (e.hashable) {
-              this.hash2d_new.add(e);
-            }
-          } else {
-            delete e.game;
-          }
-        }
-        this.entities = newEntities;
         this.cycles = 0;
       } else {
-        _ref1 = this.entities;
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          e = _ref1[_j];
-          if (e.move != null) {
-            e.move();
-            if (e.hashable) {
-              this.hash2d_new.add(e);
-            }
-          }
-        }
         this.cycles++;
       }
+      newEntities = [];
+      _ref = this.entities;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        e = _ref[_i];
+        if (e.move != null) {
+          e.move();
+          newEntities.push(e);
+          if (e.hashable) {
+            this.hash2d_new.add(e);
+          }
+        } else {
+          delete e.game;
+        }
+      }
+      this.entities = newEntities;
       hash_old = this.hash2d;
       this.hash2d = this.hash2d_new;
       this.hash2d_new = hash_old;

@@ -24,7 +24,9 @@ define ->
     
     draw : ->
       ac = atom.context
+      ac.globalAlpha = 0.6
       ac.drawImage(@SPRITE, @x-@GFX[@SPRITENAME].W_2, @y-@GFX[@SPRITENAME].W_2)
+      ac.globalAlpha = 1
       
     move : ->
       if @y < -@GFX[@SPRITENAME].H_2 or @x < -@GFX[@SPRITENAME].W_2

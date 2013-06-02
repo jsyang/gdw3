@@ -130,29 +130,24 @@ define [
       @hash2d_new.reset()
       
       if @cycles > @clearEntitiesInterval
-        newEntities = []
-        (
-          if e.move?
-            e.move()
-            newEntities.push(e)
-            if e.hashable
-              @hash2d_new.add(e)
-
-          else
-            delete e.game
-            
-        ) for e in @entities
-        @entities = newEntities
         @cycles = 0
         
       else
-        (
-          if e.move?
-            e.move()
-            if e.hashable
-              @hash2d_new.add(e)
-        ) for e in @entities
         @cycles++
+      
+      newEntities = []
+      (
+        if e.move?
+          e.move()
+          newEntities.push(e)
+          if e.hashable
+            @hash2d_new.add(e)
+
+        else
+          delete e.game
+          
+      ) for e in @entities
+      @entities = newEntities
       
       # Switcheroo
       hash_old = @hash2d
