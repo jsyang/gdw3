@@ -38,7 +38,10 @@ define [
     bubble24      : 'bubble/24.png'
     bubble32      : 'bubble/32.png'
     
-    
+    hook160       : 'hook/160.png'
+    hook161       : 'hook/161.png'
+    hook24        : 'hook/24.png'
+    hook32        : 'hook/32.png'
     
     plankton1n1    : 'plankton1/1.png'
     plankton1n2    : 'plankton1/2.png'

@@ -6,7 +6,6 @@ define ->
     hashable  : false
     
     SPRITENAME : null
-    SPRITE : null
     GFX :
       'bubble4' :
         W   : 4

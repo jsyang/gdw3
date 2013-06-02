@@ -15,13 +15,15 @@ define(function() {
     Hook.prototype.HOOKANGLE = 3.6185837;
 
     Hook.prototype.draw = function() {
-      var ac;
+      var ac, sprite;
       ac = atom.context;
+      sprite = atom.gfx[this.SPRITENAME];
+      ac.drawImage(sprite, this.x - this.GFX[this.SPRITENAME].W_2, this.y - this.GFX[this.SPRITENAME].H_2);
       ac.beginPath();
       ac.lineWidth = 0.5;
       ac.strokeStyle = this.caught ? '#a44' : '#444';
-      ac.moveTo(this.x, this.y);
-      ac.lineTo(this.x, 0);
+      ac.moveTo(this.x + this.GFX[this.SPRITENAME].W_2 - 3, this.y - this.GFX[this.SPRITENAME].H_2);
+      ac.lineTo(this.x + this.GFX[this.SPRITENAME].W_2 - 3, 0);
       return ac.stroke();
     };
 
@@ -70,12 +72,55 @@ define(function() {
       return dx * dx + dy * dy < this.r2 + e.r2;
     };
 
+    Hook.prototype.SPRITENAME = null;
+
+    Hook.prototype.GFX = {
+      'hook160': {
+        W: 16,
+        H: 16,
+        W_2: 8,
+        H_2: 8
+      },
+      'hook161': {
+        W: 16,
+        H: 16,
+        W_2: 8,
+        H_2: 8
+      },
+      'hook160': {
+        W: 16,
+        H: 16,
+        W_2: 8,
+        H_2: 8
+      },
+      'hook24': {
+        W: 24,
+        H: 24,
+        W_2: 12,
+        H_2: 12
+      },
+      'hook32': {
+        W: 32,
+        H: 32,
+        W_2: 16,
+        H_2: 16
+      }
+    };
+
+    Hook.prototype.SIZES = {
+      '160': 3,
+      '161': 3,
+      '24': 2,
+      '32': 1
+    };
+
     function Hook(params) {
       var k, v;
       for (k in params) {
         v = params[k];
         this[k] = v;
       }
+      this.SPRITENAME = "hook" + ($$.WR(this.SIZES));
       this.r = $$.R(1, 8);
       this.r_2 = this.r >> 1;
       this.r2 = this.r * this.r;

@@ -12,8 +12,6 @@ define(function() {
 
     Bubble.prototype.SPRITENAME = null;
 
-    Bubble.prototype.SPRITE = null;
-
     Bubble.prototype.GFX = {
       'bubble4': {
         W: 4,
