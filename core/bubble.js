@@ -70,12 +70,18 @@ define(function() {
       return ac.globalAlpha = 1;
     };
 
+    Bubble.prototype.remove = function() {
+      this.move = null;
+      return this.game = null;
+    };
+
     Bubble.prototype.move = function() {
       if (this.y < -this.GFX[this.SPRITENAME].H_2 || this.x < -this.GFX[this.SPRITENAME].W_2) {
-        return this.move = null;
+        this.move = null;
+        return this.game = null;
       } else {
         this.y += this.dy;
-        return this.x += 4 * this.game.current;
+        return this.x += 2 * this.game.current;
       }
     };
 

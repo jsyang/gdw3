@@ -52,13 +52,18 @@ define ->
       sprite = atom.gfx[@SPRITENAME]
       ac.drawImage(sprite, @x-@GFX[@SPRITENAME].W_2, @y-@GFX[@SPRITENAME].W_2)
       ac.globalAlpha = 1
-      
+    
+    remove : ->
+      @move = null
+      @game = null
+    
     move : ->
       if @y < -@GFX[@SPRITENAME].H_2 or @x < -@GFX[@SPRITENAME].W_2
         @move = null
+        @game = null
       else
         @y  += @dy
-        @x  += 4*@game.current
+        @x  += 2*@game.current
       
     SIZES :
       '4' : 1

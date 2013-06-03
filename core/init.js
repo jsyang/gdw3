@@ -19,7 +19,6 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     }
   };
   atom.preloadImages({
-    icon: 'icon.png',
     fledgeling0: 'fledgeling0.png',
     fledgeling1: 'fledgeling1.png',
     bubble4: 'bubble/4.png',
@@ -33,6 +32,14 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     hook161: 'hook/161.png',
     hook24: 'hook/24.png',
     hook32: 'hook/32.png',
+    rock1: 'rock/1.png',
+    rock2: 'rock/2.png',
+    rock3: 'rock/3.png',
+    rock4: 'rock/4.png',
+    rock5: 'rock/5.png',
+    rock6: 'rock/6.png',
+    rock7: 'rock/7.png',
+    rock8: 'rock/8.png',
     plankton1n1: 'plankton1/1.png',
     plankton1n2: 'plankton1/2.png',
     plankton2n1: 'plankton2/1.png',

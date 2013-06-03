@@ -5,7 +5,8 @@ define [
   'core/hash2d'
   'core/plankton'
   'core/swarm'
-], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm) ->
+  'core/rock'
+], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock) ->
     
   class FishGame extends atom.Game
     
@@ -93,6 +94,12 @@ define [
       @entities.push(swarm)
       @entities = @entities.concat(swarmfish)
     
+    addRock : (p) ->
+      @FG.queue.push(new Rock({
+        x     : p.x+$$.R(-50,50)
+        game  : @
+      }))
+    
     intervalAddSwarm : ->
       # Swarms are rare.
       if (@cycles+13) % 270 is 0 and $$.r() < 0.3
@@ -119,11 +126,18 @@ define [
       return
       
     intervalAddBubbles : ->
-      if @cycles % 50 is 0
+      if @cycles % 210 is 0
         point =
           x : atom.width + $$.R(100, 200)
           y : $$.R(100,atom.height)
         @addBubble(point) for i in [0...$$.R(3,6)]
+      return
+    
+    intervalAddRocks : ->
+      if @cycles % 20 is 0
+        point =
+          x : atom.width + $$.R(100, 300)
+        @addRock(point) for i in [0...$$.R(1,3)]
       return
     
     updateEntities : ->
@@ -169,6 +183,7 @@ define [
         @intervalAddHooks()
         @intervalAddPlankton()
         @intervalAddSwarm()
+        @intervalAddRocks()
     
     BG :
       SURFACE :
@@ -190,6 +205,9 @@ define [
         h : 100
         rate : 0.97
     
+    FG :
+      queue : []
+    
     drawSeaFloor : (sf) ->
       ac = atom.context
       
@@ -202,10 +220,29 @@ define [
         sf.x = 500
       return
       
+    drawRocks : ->
+      if @cycles % (@clearEntitiesInterval>>2) is 0
+        newQueue = []
+        (
+          if e.move? and e.draw?
+            e.move()
+            e.draw()
+            newQueue.push(e)
+        ) for e in @FG.queue
+        @FG.queue = newQueue
+      else
+        (
+          if e.move? and e.draw?
+            e.move()
+            e.draw()
+        ) for e in @FG.queue
+      return
+    
     draw : ->
       atom.context.clear()
       @drawSeaFloor(@BG.SURFACE)
       @drawSeaFloor(@BG.SEAFLOOR1)
       @drawSeaFloor(@BG.SEAFLOOR2)
       (if e.move? and e.draw? then e.draw()) for e in @entities
+      @drawRocks()
       

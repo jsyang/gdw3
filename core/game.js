@@ -2,7 +2,7 @@
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton', 'core/swarm'], function(Fish, Bubble, Hook, Hash2D, Plankton, Swarm) {
+define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton', 'core/swarm', 'core/rock'], function(Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock) {
   var FishGame;
   return FishGame = (function(_super) {
 
@@ -114,6 +114,13 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       return this.entities = this.entities.concat(swarmfish);
     };
 
+    FishGame.prototype.addRock = function(p) {
+      return this.FG.queue.push(new Rock({
+        x: p.x + $$.R(-50, 50),
+        game: this
+      }));
+    };
+
     FishGame.prototype.intervalAddSwarm = function() {
       if ((this.cycles + 13) % 270 === 0 && $$.r() < 0.3) {
         this.addSwarm({
@@ -151,13 +158,25 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
 
     FishGame.prototype.intervalAddBubbles = function() {
       var i, point, _i, _ref;
-      if (this.cycles % 50 === 0) {
+      if (this.cycles % 210 === 0) {
         point = {
           x: atom.width + $$.R(100, 200),
           y: $$.R(100, atom.height)
         };
         for (i = _i = 0, _ref = $$.R(3, 6); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           this.addBubble(point);
+        }
+      }
+    };
+
+    FishGame.prototype.intervalAddRocks = function() {
+      var i, point, _i, _ref;
+      if (this.cycles % 20 === 0) {
+        point = {
+          x: atom.width + $$.R(100, 300)
+        };
+        for (i = _i = 0, _ref = $$.R(1, 3); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          this.addRock(point);
         }
       }
     };
@@ -201,7 +220,8 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
         this.intervalAddBubbles();
         this.intervalAddHooks();
         this.intervalAddPlankton();
-        return this.intervalAddSwarm();
+        this.intervalAddSwarm();
+        return this.intervalAddRocks();
       }
     };
 
@@ -229,6 +249,10 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       }
     };
 
+    FishGame.prototype.FG = {
+      queue: []
+    };
+
     FishGame.prototype.drawSeaFloor = function(sf) {
       var ac, i, _i, _ref;
       ac = atom.context;
@@ -241,19 +265,46 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       }
     };
 
+    FishGame.prototype.drawRocks = function() {
+      var e, newQueue, _i, _j, _len, _len1, _ref, _ref1;
+      if (this.cycles % (this.clearEntitiesInterval >> 2) === 0) {
+        newQueue = [];
+        _ref = this.FG.queue;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          e = _ref[_i];
+          if ((e.move != null) && (e.draw != null)) {
+            e.move();
+            e.draw();
+            newQueue.push(e);
+          }
+        }
+        this.FG.queue = newQueue;
+      } else {
+        _ref1 = this.FG.queue;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          e = _ref1[_j];
+          if ((e.move != null) && (e.draw != null)) {
+            e.move();
+            e.draw();
+          }
+        }
+      }
+    };
+
     FishGame.prototype.draw = function() {
-      var e, _i, _len, _ref, _results;
+      var e, _i, _len, _ref;
       atom.context.clear();
       this.drawSeaFloor(this.BG.SURFACE);
       this.drawSeaFloor(this.BG.SEAFLOOR1);
       this.drawSeaFloor(this.BG.SEAFLOOR2);
       _ref = this.entities;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         e = _ref[_i];
-        _results.push((e.move != null) && (e.draw != null) ? e.draw() : void 0);
+        if ((e.move != null) && (e.draw != null)) {
+          e.draw();
+        }
       }
-      return _results;
+      return this.drawRocks();
     };
 
     return FishGame;
