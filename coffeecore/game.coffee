@@ -126,7 +126,7 @@ define [
       
     intervalAddRoe : ->
       # Roe are rarer.
-      if @cycles % 310 is 0 #and $$.r() < 0.12
+      if @cycles % 310 is 0 and $$.r() < 0.12
         @addRoe({
           x : atom.width + $$.R(100, 200)
           y : $$.R(20,atom.height-20)

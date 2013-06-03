@@ -134,7 +134,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     };
 
     FishGame.prototype.intervalAddRoe = function() {
-      if (this.cycles % 310 === 0) {
+      if (this.cycles % 310 === 0 && $$.r() < 0.12) {
         this.addRoe({
           x: atom.width + $$.R(100, 200),
           y: $$.R(20, atom.height - 20)
