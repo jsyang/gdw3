@@ -19,6 +19,13 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     }
   };
   atom.preloadImages({
+    dna: 'dna.png',
+    roe1: 'roe/1.png',
+    roe2: 'roe/2.png',
+    roe3: 'roe/3.png',
+    fatstart: 'fat/start.png',
+    fatmiddle: 'fat/middle.png',
+    fatend: 'fat/end.png',
     fledgeling0: 'fledgeling0.png',
     fledgeling1: 'fledgeling1.png',
     bubble4: 'bubble/4.png',
@@ -74,7 +81,8 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     plankton1: 'plankton1.mp3',
     plankton2: 'plankton2.mp3',
     plankton3: 'plankton3.mp3',
-    recruit: 'recruit.mp3'
+    recruit: 'recruit.mp3',
+    roe: 'roe.mp3'
   }, function() {
     loaded.sfx = true;
     return isPreloadComplete();

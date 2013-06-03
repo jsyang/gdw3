@@ -66,7 +66,8 @@ define(function() {
       ac = atom.context;
       ac.globalAlpha = 0.3;
       sprite = atom.gfx[this.SPRITENAME];
-      ac.drawImage(sprite, this.x - this.GFX[this.SPRITENAME].W_2, this.y - this.GFX[this.SPRITENAME].W_2);
+      ac.drawImage(sprite, this.x - this.GFX[this.SPRITENAME].W_2 + this.amplitude * Math.sin(this.lifetime), this.y - this.GFX[this.SPRITENAME].H_2);
+      this.lifetime++;
       return ac.globalAlpha = 1;
     };
 
@@ -102,7 +103,9 @@ define(function() {
         this[k] = v;
       }
       this.SPRITENAME = "bubble" + ($$.WR(this.SIZES));
-      this.dy = -$$.r(4.9) - 0.15;
+      this.dy = -$$.r(1.9) - 3.25;
+      this.lifetime = 0;
+      this.amplitude = $$.r(3);
     }
 
     return Bubble;

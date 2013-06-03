@@ -106,13 +106,19 @@ define ->
       atom.playSound('recruit')
       @target = atom.input.mouse
       @player = true
+      @game.addFish()
       
+    collectRoe : (n) ->
+      atom.playSound('roe')
+      @game.player.roe+=n
     
     hooked : (e) ->
       @catcher = e
       @caught  = true
     
     eat : (e) ->
+      if @player
+        @game.player.fat += $$.r(0.25)
       @dSpeed *= @fatnessPenalty
     
     draw : ->
@@ -136,6 +142,7 @@ define ->
       ac.restore()
     
     checkHits : ->
+      # todo: make this hit test function a common one.
       bin = @game.hash2d.get(@)
       (
         if entity? and @canHit(entity) and @hit(entity) and entity.player
@@ -162,8 +169,11 @@ define ->
       @r2 *= @r2
     
     remove : ->
+      if @player
+        @game.loseFish()
       @move = null
       @catcher = null
+      @game = null
     
     constructor : (params) ->
       @[k] = v for k, v of params
@@ -174,6 +184,8 @@ define ->
           y : 0
           normalizationFactor : $$.r(0.27)+0.51
       
+      if @player
+        @game.addFish()
     
       @dSpeed   = $$.r(0.12)+0.13 unless @dSpeed?
       @maxSpeed = $$.r(8)+4       unless @maxSpeed?

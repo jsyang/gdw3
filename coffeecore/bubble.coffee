@@ -50,7 +50,8 @@ define ->
       ac = atom.context
       ac.globalAlpha = 0.3
       sprite = atom.gfx[@SPRITENAME]
-      ac.drawImage(sprite, @x-@GFX[@SPRITENAME].W_2, @y-@GFX[@SPRITENAME].W_2)
+      ac.drawImage(sprite, @x-@GFX[@SPRITENAME].W_2+@amplitude*Math.sin(@lifetime), @y-@GFX[@SPRITENAME].H_2)
+      @lifetime++
       ac.globalAlpha = 1
     
     remove : ->
@@ -79,4 +80,7 @@ define ->
 
       @SPRITENAME = "bubble#{$$.WR(@SIZES)}"
       
-      @dy = -$$.r(4.9) - 0.15
+      @dy = -$$.r(1.9) - 3.25
+      
+      @lifetime = 0
+      @amplitude = $$.r(3)

@@ -26,7 +26,16 @@ define [
       false
     
   atom.preloadImages({
-
+    dna           : 'dna.png'
+  
+    roe1          : 'roe/1.png'
+    roe2          : 'roe/2.png'
+    roe3          : 'roe/3.png'
+  
+    fatstart      : 'fat/start.png'
+    fatmiddle     : 'fat/middle.png'
+    fatend        : 'fat/end.png'
+    
     fledgeling0   : 'fledgeling0.png'
     fledgeling1   : 'fledgeling1.png'
     
@@ -91,6 +100,7 @@ define [
     plankton3   : 'plankton3.mp3'
     
     recruit     : 'recruit.mp3'
+    roe         : 'roe.mp3'
   }, ->
     loaded.sfx = true
     isPreloadComplete()

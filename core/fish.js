@@ -120,7 +120,13 @@ define(function() {
       }
       atom.playSound('recruit');
       this.target = atom.input.mouse;
-      return this.player = true;
+      this.player = true;
+      return this.game.addFish();
+    };
+
+    Fish.prototype.collectRoe = function(n) {
+      atom.playSound('roe');
+      return this.game.player.roe += n;
     };
 
     Fish.prototype.hooked = function(e) {
@@ -129,6 +135,9 @@ define(function() {
     };
 
     Fish.prototype.eat = function(e) {
+      if (this.player) {
+        this.game.player.fat += $$.r(0.25);
+      }
       return this.dSpeed *= this.fatnessPenalty;
     };
 
@@ -195,8 +204,12 @@ define(function() {
     };
 
     Fish.prototype.remove = function() {
+      if (this.player) {
+        this.game.loseFish();
+      }
       this.move = null;
-      return this.catcher = null;
+      this.catcher = null;
+      return this.game = null;
     };
 
     function Fish(params) {
@@ -211,6 +224,9 @@ define(function() {
           y: 0,
           normalizationFactor: $$.r(0.27) + 0.51
         };
+      }
+      if (this.player) {
+        this.game.addFish();
       }
       if (this.dSpeed == null) {
         this.dSpeed = $$.r(0.12) + 0.13;

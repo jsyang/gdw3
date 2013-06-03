@@ -6,18 +6,24 @@ define [
   'core/plankton'
   'core/swarm'
   'core/rock'
-], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock) ->
+  'core/statDisplay'
+  'core/roe'
+], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock, StatDisplay, Roe) ->
     
   class FishGame extends atom.Game
     
     cycles                : 0
     cyclesPeriod          : 600
-    clearEntitiesInterval : 300 # how often do we try and clear out entities[]
     
     # flow of the water
     current  : -1.9
     
-    player   : null
+    player   :
+      roe         : 0
+      schoolSize  : 0
+      fat         : 1.2
+      metabolism  : 0.00032
+      
     entities : []
     
     
@@ -38,18 +44,20 @@ define [
       
       @hash2d_new = new Hash2D()
       @hash2d     = new Hash2D()
+      @FG.fatness = new StatDisplay({ game : @ })
       
       @registerInputs()
-      @registerFocus()
+      #@registerFocus()
+      
     
     registerInputs : ->
       atom.input.bind(atom.button.LEFT, 'mouseleft')
       atom.input.bind(atom.touch.TOUCHING, 'touchfinger')
     
-    registerFocus : ->
-      # make sure we don't waste them precious cycles.
-      window.onblur = => @stop
-      window.onfocus = => @run
+    #registerFocus : ->
+    #  # make sure we don't waste them precious cycles.
+    #  window.onblur = => @stop
+    #  window.onfocus = => @run
     
     addPlankton : (p) ->
       @entities.push(new Plankton({
@@ -69,6 +77,13 @@ define [
       @entities.push(new Bubble({
         x     : p.x+$$.R(-64,64)
         y     : p.y+$$.R(-32,32)
+        game  : @
+      }))
+      
+    addRoe : (p) ->
+      @entities.push(new Roe({
+        x     : p.x+$$.R(-64,64)
+        y     : p.y+$$.R(-64,64)
         game  : @
       }))
       
@@ -108,6 +123,15 @@ define [
           y : $$.R(20,atom.height-20)
         })
       return
+      
+    intervalAddRoe : ->
+      # Roe are rarer.
+      if @cycles % 310 is 0 #and $$.r() < 0.12
+        @addRoe({
+          x : atom.width + $$.R(100, 200)
+          y : $$.R(20,atom.height-20)
+        })
+      return
     
     intervalAddPlankton : ->
       if (@cycles+7) % 120 is 0
@@ -143,9 +167,8 @@ define [
     updateEntities : ->
       @hash2d_new.reset()
       
-      if @cycles > @clearEntitiesInterval
+      if @cycles > @cyclesPeriod
         @cycles = 0
-        
       else
         @cycles++
       
@@ -173,6 +196,20 @@ define [
     update : (dt) ->
       @mode[@mode.current].apply(@, [dt])
     
+    metabolize : ->
+      if @player.schoolSize > 0
+        @player.fat -= @player.schoolSize*@player.metabolism
+    
+    addFish : ->
+      @player.metabolism *= 1.17
+      @player.schoolSize++
+    
+    loseFish : ->
+      @player.fat        -= $$.r(1.5)
+      @player.metabolism *= 0.93
+      @player.schoolSize--
+    
+    
     mode :
       current : 'move'
       
@@ -184,6 +221,9 @@ define [
         @intervalAddPlankton()
         @intervalAddSwarm()
         @intervalAddRocks()
+        @intervalAddRoe()
+
+        @metabolize()
     
     BG :
       SURFACE :
@@ -206,7 +246,8 @@ define [
         rate : 0.97
     
     FG :
-      queue : []
+      queue   : []
+      fatness : null
     
     drawSeaFloor : (sf) ->
       ac = atom.context
@@ -221,7 +262,7 @@ define [
       return
       
     drawRocks : ->
-      if @cycles % (@clearEntitiesInterval>>2) is 0
+      if @cycles % (@cyclesPeriod>>2) is 0
         newQueue = []
         (
           if e.move? and e.draw?
@@ -245,4 +286,5 @@ define [
       @drawSeaFloor(@BG.SEAFLOOR2)
       (if e.move? and e.draw? then e.draw()) for e in @entities
       @drawRocks()
+      @FG.fatness.draw()
       

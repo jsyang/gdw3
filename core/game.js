@@ -2,7 +2,7 @@
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton', 'core/swarm', 'core/rock'], function(Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock) {
+define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton', 'core/swarm', 'core/rock', 'core/statDisplay', 'core/roe'], function(Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock, StatDisplay, Roe) {
   var FishGame;
   return FishGame = (function(_super) {
 
@@ -12,11 +12,14 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
 
     FishGame.prototype.cyclesPeriod = 600;
 
-    FishGame.prototype.clearEntitiesInterval = 300;
-
     FishGame.prototype.current = -1.9;
 
-    FishGame.prototype.player = null;
+    FishGame.prototype.player = {
+      roe: 0,
+      schoolSize: 0,
+      fat: 1.2,
+      metabolism: 0.00032
+    };
 
     FishGame.prototype.entities = [];
 
@@ -46,23 +49,15 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       })());
       this.hash2d_new = new Hash2D();
       this.hash2d = new Hash2D();
+      this.FG.fatness = new StatDisplay({
+        game: this
+      });
       this.registerInputs();
-      this.registerFocus();
     }
 
     FishGame.prototype.registerInputs = function() {
       atom.input.bind(atom.button.LEFT, 'mouseleft');
       return atom.input.bind(atom.touch.TOUCHING, 'touchfinger');
-    };
-
-    FishGame.prototype.registerFocus = function() {
-      var _this = this;
-      window.onblur = function() {
-        return _this.stop;
-      };
-      return window.onfocus = function() {
-        return _this.run;
-      };
     };
 
     FishGame.prototype.addPlankton = function(p) {
@@ -85,6 +80,14 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       return this.entities.push(new Bubble({
         x: p.x + $$.R(-64, 64),
         y: p.y + $$.R(-32, 32),
+        game: this
+      }));
+    };
+
+    FishGame.prototype.addRoe = function(p) {
+      return this.entities.push(new Roe({
+        x: p.x + $$.R(-64, 64),
+        y: p.y + $$.R(-64, 64),
         game: this
       }));
     };
@@ -124,6 +127,15 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     FishGame.prototype.intervalAddSwarm = function() {
       if ((this.cycles + 13) % 270 === 0 && $$.r() < 0.3) {
         this.addSwarm({
+          x: atom.width + $$.R(100, 200),
+          y: $$.R(20, atom.height - 20)
+        });
+      }
+    };
+
+    FishGame.prototype.intervalAddRoe = function() {
+      if (this.cycles % 310 === 0) {
+        this.addRoe({
           x: atom.width + $$.R(100, 200),
           y: $$.R(20, atom.height - 20)
         });
@@ -184,7 +196,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     FishGame.prototype.updateEntities = function() {
       var e, hash_old, newEntities, _i, _len, _ref;
       this.hash2d_new.reset();
-      if (this.cycles > this.clearEntitiesInterval) {
+      if (this.cycles > this.cyclesPeriod) {
         this.cycles = 0;
       } else {
         this.cycles++;
@@ -213,6 +225,23 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       return this.mode[this.mode.current].apply(this, [dt]);
     };
 
+    FishGame.prototype.metabolize = function() {
+      if (this.player.schoolSize > 0) {
+        return this.player.fat -= this.player.schoolSize * this.player.metabolism;
+      }
+    };
+
+    FishGame.prototype.addFish = function() {
+      this.player.metabolism *= 1.17;
+      return this.player.schoolSize++;
+    };
+
+    FishGame.prototype.loseFish = function() {
+      this.player.fat -= $$.r(1.5);
+      this.player.metabolism *= 0.93;
+      return this.player.schoolSize--;
+    };
+
     FishGame.prototype.mode = {
       current: 'move',
       move: function(dt) {
@@ -221,7 +250,9 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
         this.intervalAddHooks();
         this.intervalAddPlankton();
         this.intervalAddSwarm();
-        return this.intervalAddRocks();
+        this.intervalAddRocks();
+        this.intervalAddRoe();
+        return this.metabolize();
       }
     };
 
@@ -250,7 +281,8 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     };
 
     FishGame.prototype.FG = {
-      queue: []
+      queue: [],
+      fatness: null
     };
 
     FishGame.prototype.drawSeaFloor = function(sf) {
@@ -267,7 +299,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
 
     FishGame.prototype.drawRocks = function() {
       var e, newQueue, _i, _j, _len, _len1, _ref, _ref1;
-      if (this.cycles % (this.clearEntitiesInterval >> 2) === 0) {
+      if (this.cycles % (this.cyclesPeriod >> 2) === 0) {
         newQueue = [];
         _ref = this.FG.queue;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -304,7 +336,8 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
           e.draw();
         }
       }
-      return this.drawRocks();
+      this.drawRocks();
+      return this.FG.fatness.draw();
     };
 
     return FishGame;
