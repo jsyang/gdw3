@@ -29,7 +29,7 @@ define(function() {
       ac.drawImage(atom.gfx.fatend, this.margin + 24 * i, y);
       y -= 56;
       for (j = _j = 0, _ref1 = this.game.player.roe; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
-        ac.drawImage(atom.gfx.dna, this.margin + 48 * j, y);
+        ac.drawImage(atom.gfx.dna, this.margin + 28 * j, y);
       }
     };
 

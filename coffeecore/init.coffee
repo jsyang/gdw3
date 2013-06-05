@@ -39,6 +39,11 @@ define [
     fledgeling0   : 'fledgeling0.png'
     fledgeling1   : 'fledgeling1.png'
     
+    fish00        : 'fish00.png'
+    fish01        : 'fish01.png'
+    fish10        : 'fish10.png'
+    fish11        : 'fish11.png'
+    
     bubble4       : 'bubble/4.png'
     bubble6       : 'bubble/6.png'
     bubble8       : 'bubble/8.png'

@@ -34,7 +34,32 @@ define(function() {
       'fledgeling1': {
         W: 54,
         H: 34
+      },
+      'fish00': {
+        W: 46,
+        H: 31
+      },
+      'fish10': {
+        W: 46,
+        H: 31
+      },
+      'fish01': {
+        W: 116,
+        H: 77
+      },
+      'fish11': {
+        W: 116,
+        H: 77
       }
+    };
+
+    Fish.prototype.FISHCHANCE = {
+      'fledgeling0': 4,
+      'fledgeling1': 3,
+      'fish00': 2,
+      'fish10': 1,
+      'fish01': 2,
+      'fish11': 1
     };
 
     Fish.prototype.speed = null;
@@ -199,7 +224,7 @@ define(function() {
     };
 
     Fish.prototype.updateHitRadius = function() {
-      this.r2 = this.GFX[this.SPRITENAME].W;
+      this.r2 = this.GFX[this.SPRITENAME].H;
       return this.r2 *= this.r2;
     };
 
@@ -235,7 +260,7 @@ define(function() {
         this.maxSpeed = $$.r(8) + 4;
       }
       this.frame = $$.R(0, this.LASTFRAME);
-      this.SPRITENAME = "fledgeling" + ($$.R(0, 1));
+      this.SPRITENAME = $$.WR(this.FISHCHANCE);
       this.SPRITE = atom.gfx[this.SPRITENAME];
       this.updateHitRadius();
     }

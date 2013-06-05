@@ -22,7 +22,7 @@ define ->
       
       y -= 56
       (
-        ac.drawImage(atom.gfx.dna, @margin+48*j, y)
+        ac.drawImage(atom.gfx.dna, @margin+28*j, y)
       ) for j in [0...@game.player.roe]
       
       return

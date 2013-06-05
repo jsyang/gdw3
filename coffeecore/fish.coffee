@@ -22,6 +22,26 @@ define ->
       'fledgeling1' :
         W : 54
         H : 34
+      'fish00' :
+        W : 46
+        H : 31
+      'fish10' :
+        W : 46
+        H : 31
+      'fish01' :
+        W : 116
+        H : 77
+      'fish11' :
+        W : 116
+        H : 77
+    
+    FISHCHANCE :
+      'fledgeling0' : 4
+      'fledgeling1' : 3
+      'fish00'      : 2
+      'fish10'      : 1
+      'fish01'      : 2
+      'fish11'      : 1
     
     # Fish have a lifetime...
     # if they don't eat often enough they die
@@ -165,7 +185,7 @@ define ->
       dx*dx + dy*dy < @r2+e.r2
     
     updateHitRadius : ->
-      @r2 = @GFX[@SPRITENAME].W
+      @r2 = @GFX[@SPRITENAME].H
       @r2 *= @r2
     
     remove : ->
@@ -191,7 +211,7 @@ define ->
       @maxSpeed = $$.r(8)+4       unless @maxSpeed?
       
       @frame = $$.R(0,@LASTFRAME)
-      @SPRITENAME = "fledgeling#{$$.R(0,1)}"
+      @SPRITENAME = $$.WR(@FISHCHANCE)
       @SPRITE = atom.gfx[@SPRITENAME]
 
       @updateHitRadius()
