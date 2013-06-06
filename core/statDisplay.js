@@ -28,9 +28,9 @@ define(function() {
       }
       ac.drawImage(atom.gfx.fatend, this.margin + 24 * i, y);
       y -= 36;
-      ac.drawImage(atom.gfx.bolt24, this.margin, y);
-      ac.font = '24px sans-serif';
-      ac.fillText(this.game.player.metabolism, this.margin + 28, y + 20);
+      if (!(this.game.player.metabolism < 0.001)) {
+        ac.drawImage(atom.gfx.bolt24, this.margin, y);
+      }
       y -= 36;
       for (j = _j = 0, _ref1 = this.game.player.roe; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
         ac.drawImage(atom.gfx.dna, this.margin + 28 * j, y);

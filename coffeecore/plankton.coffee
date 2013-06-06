@@ -13,41 +13,14 @@ define ->
     
     SPRITE      : null
     SPRITENAME  : null
+    spriteX     : 0
+    spriteY     : 0
     GFX :
-      'plankton1' :
-        W : 33
-        H : 19
-      'plankton2' :
-        W : 22
-        H : 26
-      'plankton3' :
-        W : 14
-        H : 23
-      'plankton4' :
-        W : 21
-        H : 27
-      'plankton5' :
-        W : 27
-        H : 27
-      'plankton6' :
-        W : 20
-        H : 23
-      'plankton7' :
-        W : 26
-        H : 24
-      'plankton8' :
-        W : 24
-        H : 23
-      'plankton9' :
-        W : 21
-        H : 32
-      'plankton10' :
-        W : 30
-        H : 36
-      'plankton11' :
-        W : 33
-        H : 28
-  
+      W : 16
+      H : 16
+      W_2 : 8
+      H_2 : 8
+      
     NOISES  :
       'plankton1' : 1
       'plankton2' : 1
@@ -56,10 +29,10 @@ define ->
     draw : ->
       ac = atom.context
       ac.save()
-      properties = @GFX[@SPRITENAME]
-      ac.translate(@x-(properties.W>>1), @y-(properties.H>>1))
-      ac.rotate(@rotation)
-      ac.drawImage(@SPRITE, 0, 0)
+      ac.globalAlpha = 0.3
+      ac.translate(@x-8, @y-8)
+      #ac.rotate(@rotation)
+      ac.drawImage(atom.gfx.plankton, @spriteX<<4, @spriteY<<4, 16, 16, 0, 0, 16, 16)
       ac.restore()
       
     move : ->
@@ -97,12 +70,11 @@ define ->
     constructor : (params) ->
       @[k] = v for k, v of params
       
-      s = $$.R(1,11)
-      @frame = $$.R(0,1)
+      @spriteX = $$.R(0,11)
+      @spriteY = $$.R(0,2)
       
-      @SPRITENAME = "plankton#{s}"
-      @SPRITE = atom.gfx["#{@SPRITENAME}n#{$$.R(1,2)}"]
-      @r    = @GFX[@SPRITENAME].W
+      # todo: inline this once we have no more plankton types to add
+      @r    = 8
       @r_2  = @r>>1
       @r2   = @r*@r
       @rotation = $$.r(@PI2)

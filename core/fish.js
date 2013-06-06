@@ -77,7 +77,7 @@ define(function() {
 
     Fish.prototype.fatnessPenalty = 0.987;
 
-    Fish.prototype.energyBoost = 1.0013;
+    Fish.prototype.energyBoost = 1.00073;
 
     Fish.prototype.caught = false;
 

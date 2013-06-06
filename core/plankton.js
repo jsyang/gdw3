@@ -22,51 +22,15 @@ define(function() {
 
     Plankton.prototype.SPRITENAME = null;
 
+    Plankton.prototype.spriteX = 0;
+
+    Plankton.prototype.spriteY = 0;
+
     Plankton.prototype.GFX = {
-      'plankton1': {
-        W: 33,
-        H: 19
-      },
-      'plankton2': {
-        W: 22,
-        H: 26
-      },
-      'plankton3': {
-        W: 14,
-        H: 23
-      },
-      'plankton4': {
-        W: 21,
-        H: 27
-      },
-      'plankton5': {
-        W: 27,
-        H: 27
-      },
-      'plankton6': {
-        W: 20,
-        H: 23
-      },
-      'plankton7': {
-        W: 26,
-        H: 24
-      },
-      'plankton8': {
-        W: 24,
-        H: 23
-      },
-      'plankton9': {
-        W: 21,
-        H: 32
-      },
-      'plankton10': {
-        W: 30,
-        H: 36
-      },
-      'plankton11': {
-        W: 33,
-        H: 28
-      }
+      W: 16,
+      H: 16,
+      W_2: 8,
+      H_2: 8
     };
 
     Plankton.prototype.NOISES = {
@@ -76,13 +40,12 @@ define(function() {
     };
 
     Plankton.prototype.draw = function() {
-      var ac, properties;
+      var ac;
       ac = atom.context;
       ac.save();
-      properties = this.GFX[this.SPRITENAME];
-      ac.translate(this.x - (properties.W >> 1), this.y - (properties.H >> 1));
-      ac.rotate(this.rotation);
-      ac.drawImage(this.SPRITE, 0, 0);
+      ac.globalAlpha = 0.3;
+      ac.translate(this.x - 8, this.y - 8);
+      ac.drawImage(atom.gfx.plankton, this.spriteX << 4, this.spriteY << 4, 16, 16, 0, 0, 16, 16);
       return ac.restore();
     };
 
@@ -128,16 +91,14 @@ define(function() {
     };
 
     function Plankton(params) {
-      var k, s, v;
+      var k, v;
       for (k in params) {
         v = params[k];
         this[k] = v;
       }
-      s = $$.R(1, 11);
-      this.frame = $$.R(0, 1);
-      this.SPRITENAME = "plankton" + s;
-      this.SPRITE = atom.gfx["" + this.SPRITENAME + "n" + ($$.R(1, 2))];
-      this.r = this.GFX[this.SPRITENAME].W;
+      this.spriteX = $$.R(0, 11);
+      this.spriteY = $$.R(0, 2);
+      this.r = 8;
       this.r_2 = this.r >> 1;
       this.r2 = this.r * this.r;
       this.rotation = $$.r(this.PI2);

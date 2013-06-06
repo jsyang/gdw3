@@ -22,10 +22,10 @@ define ->
       
       # Metabolism display
       y -= 36
-      ac.drawImage(atom.gfx.bolt24, @margin, y)
-      ac.font = '24px sans-serif'
+      ac.drawImage(atom.gfx.bolt24, @margin, y) unless @game.player.metabolism < 0.001
+      #ac.font = '24px sans-serif'
       #ac.fillText(''+((@game.player.metabolism*@game.player.metabolismFactor_)>>0), @margin+28, y+20)
-      ac.fillText(@game.player.metabolism, @margin+28, y+20)
+      #ac.fillText(@game.player.metabolism, @margin+28, y+20)
       
       # DNA collected
       y -= 36

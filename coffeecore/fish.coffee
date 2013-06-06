@@ -62,7 +62,7 @@ define ->
     dSpeed          : $$.r(0.31)+0.27
     maxSpeed        : $$.r(10)+2
     fatnessPenalty  : 0.987
-    energyBoost     : 1.0013
+    energyBoost     : 1.00073
     
     # Have we been hooked or bagged?
     caught        : false
