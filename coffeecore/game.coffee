@@ -8,7 +8,8 @@ define [
   'core/rock'
   'core/statDisplay'
   'core/roe'
-], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock, StatDisplay, Roe) ->
+  'core/stageTitle'
+], (Fish, Bubble, Hook, Hash2D, Plankton, Swarm, Rock, StatDisplay, Roe, StageTitle) ->
     
   class FishGame extends atom.Game
     
@@ -19,10 +20,11 @@ define [
     current  : -1.9
     
     player   :
-      roe         : 0
-      schoolSize  : 0
-      fat         : 1.2
-      metabolism  : 0.00032
+      roe               : 0
+      schoolSize        : 0
+      fat               : 1.2
+      metabolismFactor  : 0.000112
+      metabolism        : 0.00071
       
     entities : []
     
@@ -46,6 +48,7 @@ define [
       @hash2d     = new Hash2D()
       @FG.fatness = new StatDisplay({ game : @ })
       
+      @entities.push(new StageTitle({ SPRITENAME : 'swimandeat' }))
       @registerInputs()
       #@registerFocus()
       
@@ -198,15 +201,19 @@ define [
     
     metabolize : ->
       if @player.schoolSize > 0
-        @player.fat -= @player.schoolSize*@player.metabolism
+        @player.fat -= @player.metabolism
+        if @player.fat < 0
+          @player.fat = 0
     
     addFish : ->
-      @player.metabolism *= 1.17
+      @player.metabolism += $$.r(@player.metabolism)
       @player.schoolSize++
     
     loseFish : ->
       @player.fat        -= $$.r(1.5)
-      @player.metabolism *= 0.93
+      if @player.fat < 0
+        @player.fat = 0
+      @player.metabolism -= $$.r(@player.metabolism)
       @player.schoolSize--
     
     

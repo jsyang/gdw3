@@ -25,23 +25,31 @@ define ->
       'fish00' :
         W : 46
         H : 31
-      'fish10' :
-        W : 46
-        H : 31
       'fish01' :
         W : 116
         H : 77
+      'fish10' :
+        W : 46
+        H : 31
       'fish11' :
         W : 116
         H : 77
+      'fish20' :
+        W : 50
+        H : 34
+      'fish21' :
+        W : 125
+        H : 86
     
     FISHCHANCE :
-      'fledgeling0' : 4
-      'fledgeling1' : 3
-      'fish00'      : 2
+      'fledgeling0' : 2
+      'fledgeling1' : 2
+      'fish00'      : 1
       'fish10'      : 1
-      'fish01'      : 2
-      'fish11'      : 1
+      #'fish01'      : 2
+      #'fish11'      : 1
+      'fish20'      : 4
+      #'fish21'      : 1
     
     # Fish have a lifetime...
     # if they don't eat often enough they die
@@ -54,6 +62,7 @@ define ->
     dSpeed          : $$.r(0.31)+0.27
     maxSpeed        : $$.r(10)+2
     fatnessPenalty  : 0.987
+    energyBoost     : 1.0013
     
     # Have we been hooked or bagged?
     caught        : false
@@ -139,7 +148,8 @@ define ->
     eat : (e) ->
       if @player
         @game.player.fat += $$.r(0.25)
-      @dSpeed *= @fatnessPenalty
+      @dSpeed   *= @fatnessPenalty
+      @maxSpeed *= @energyBoost
     
     draw : ->
       ac = atom.context

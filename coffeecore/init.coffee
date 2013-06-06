@@ -26,6 +26,10 @@ define [
       false
     
   atom.preloadImages({
+    swimandeat      : 'swimandeat.png'
+    spawninggrounds : 'spawninggrounds.png'
+  
+    bolt24        : 'bolt24.png'
     dna           : 'dna.png'
   
     roe1          : 'roe/1.png'
@@ -43,6 +47,8 @@ define [
     fish01        : 'fish01.png'
     fish10        : 'fish10.png'
     fish11        : 'fish11.png'
+    fish20        : 'fish20.png'
+    fish21        : 'fish21.png'
     
     bubble4       : 'bubble/4.png'
     bubble6       : 'bubble/6.png'

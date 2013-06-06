@@ -39,27 +39,34 @@ define(function() {
         W: 46,
         H: 31
       },
-      'fish10': {
-        W: 46,
-        H: 31
-      },
       'fish01': {
         W: 116,
         H: 77
       },
+      'fish10': {
+        W: 46,
+        H: 31
+      },
       'fish11': {
         W: 116,
         H: 77
+      },
+      'fish20': {
+        W: 50,
+        H: 34
+      },
+      'fish21': {
+        W: 125,
+        H: 86
       }
     };
 
     Fish.prototype.FISHCHANCE = {
-      'fledgeling0': 4,
-      'fledgeling1': 3,
-      'fish00': 2,
+      'fledgeling0': 2,
+      'fledgeling1': 2,
+      'fish00': 1,
       'fish10': 1,
-      'fish01': 2,
-      'fish11': 1
+      'fish20': 4
     };
 
     Fish.prototype.speed = null;
@@ -69,6 +76,8 @@ define(function() {
     Fish.prototype.maxSpeed = $$.r(10) + 2;
 
     Fish.prototype.fatnessPenalty = 0.987;
+
+    Fish.prototype.energyBoost = 1.0013;
 
     Fish.prototype.caught = false;
 
@@ -163,7 +172,8 @@ define(function() {
       if (this.player) {
         this.game.player.fat += $$.r(0.25);
       }
-      return this.dSpeed *= this.fatnessPenalty;
+      this.dSpeed *= this.fatnessPenalty;
+      return this.maxSpeed *= this.energyBoost;
     };
 
     Fish.prototype.draw = function() {
