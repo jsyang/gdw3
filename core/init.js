@@ -3,6 +3,7 @@
 define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame) {
   var isPreloadComplete, loaded, startGame;
   startGame = function() {
+    atom.playSound('music', true);
     window.game = new FishGame();
     return window.game.run();
   };
@@ -66,6 +67,9 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
   });
   atom.preloadSounds({
     tick: 'tick.mp3',
+    die: 'die.mp3',
+    music: 'music.mp3',
+    ahahah: 'ahahah1.mp3',
     plankton1: 'plankton1.mp3',
     plankton2: 'plankton2.mp3',
     plankton3: 'plankton3.mp3',

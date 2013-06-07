@@ -42,13 +42,13 @@ define ->
         H : 86
     
     FISHCHANCE :
-      'fledgeling0' : 2
-      'fledgeling1' : 2
+      'fledgeling0' : 3
+      'fledgeling1' : 3
       'fish00'      : 1
       'fish10'      : 1
       #'fish01'      : 2
       #'fish11'      : 1
-      'fish20'      : 4
+      'fish20'      : 1
       #'fish21'      : 1
     
     # Fish have a lifetime...
@@ -69,6 +69,7 @@ define ->
     
     # Are we part of the player's posse?
     player        : false
+    recruitFailed : false
     
     # Hashable? Do we want to put this in the list of things to hittest?
     hashable      : true
@@ -115,7 +116,7 @@ define ->
       else
         # todo : make it so something happens if player's fish dips out.. / is too slow to catch up
         # bonus for a spawning stage?
-        if @player is false
+        if @player is false and @recruitFailed is false
           @checkHits()
         
         @x += @speed.x
@@ -127,15 +128,24 @@ define ->
         @normalizeSpeed()
         @setRotation()
     
-    recruit : ->
-      if @target.constructor.name == 'Swarm'
-        @target.children[@target.children.indexOf(@)] = null
-    
-      # todo : extend this for further uses
-      atom.playSound('recruit')
-      @target = atom.input.mouse
-      @player = true
-      @game.addFish()
+    recruit : (recruiter) ->
+      charisma = (@r2 - recruiter.r2)/@r2
+      if ($$.r() > charisma) or $$.r() < 0.0015 # very very slim chance of larger fish joining your school
+        if @target.constructor.name == 'Swarm'
+          @target.children[@target.children.indexOf(@)] = null
+      
+        # todo : extend this for further uses
+        atom.playSound('recruit')
+        @target = atom.input.mouse
+        @player = true
+        @game.addFish()
+      
+      else
+        atom.playSound('ahahah')
+        @recruitFailed = true
+        
+      return
+      
       
     collectRoe : (n) ->
       atom.playSound('roe')
@@ -145,11 +155,12 @@ define ->
       @catcher = e
       @caught  = true
     
-    eat : (e) ->
+    eat : ->
       if @player
-        @game.player.fat += $$.r(0.25)
-      @dSpeed   *= @fatnessPenalty
-      @maxSpeed *= @energyBoost
+        @game.player.fat++
+      
+      @dSpeed   *= @fatnessPenalty  # Fat fish accelerate slowly
+      @maxSpeed *= @energyBoost     # Fat fish have a higher top speed (more energy)
     
     draw : ->
       ac = atom.context
@@ -176,7 +187,7 @@ define ->
       bin = @game.hash2d.get(@)
       (
         if entity? and @canHit(entity) and @hit(entity) and entity.player
-          @recruit()
+          @recruit(entity)
           break
       ) for entity in bin
       return 

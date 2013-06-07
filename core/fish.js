@@ -62,11 +62,11 @@ define(function() {
     };
 
     Fish.prototype.FISHCHANCE = {
-      'fledgeling0': 2,
-      'fledgeling1': 2,
+      'fledgeling0': 3,
+      'fledgeling1': 3,
       'fish00': 1,
       'fish10': 1,
-      'fish20': 4
+      'fish20': 1
     };
 
     Fish.prototype.speed = null;
@@ -82,6 +82,8 @@ define(function() {
     Fish.prototype.caught = false;
 
     Fish.prototype.player = false;
+
+    Fish.prototype.recruitFailed = false;
 
     Fish.prototype.hashable = true;
 
@@ -136,7 +138,7 @@ define(function() {
           return this.y = this.catcher.y;
         }
       } else {
-        if (this.player === false) {
+        if (this.player === false && this.recruitFailed === false) {
           this.checkHits();
         }
         this.x += this.speed.x;
@@ -148,14 +150,21 @@ define(function() {
       }
     };
 
-    Fish.prototype.recruit = function() {
-      if (this.target.constructor.name === 'Swarm') {
-        this.target.children[this.target.children.indexOf(this)] = null;
+    Fish.prototype.recruit = function(recruiter) {
+      var charisma;
+      charisma = (this.r2 - recruiter.r2) / this.r2;
+      if (($$.r() > charisma) || $$.r() < 0.0015) {
+        if (this.target.constructor.name === 'Swarm') {
+          this.target.children[this.target.children.indexOf(this)] = null;
+        }
+        atom.playSound('recruit');
+        this.target = atom.input.mouse;
+        this.player = true;
+        this.game.addFish();
+      } else {
+        atom.playSound('ahahah');
+        this.recruitFailed = true;
       }
-      atom.playSound('recruit');
-      this.target = atom.input.mouse;
-      this.player = true;
-      return this.game.addFish();
     };
 
     Fish.prototype.collectRoe = function(n) {
@@ -168,9 +177,9 @@ define(function() {
       return this.caught = true;
     };
 
-    Fish.prototype.eat = function(e) {
+    Fish.prototype.eat = function() {
       if (this.player) {
-        this.game.player.fat += $$.r(0.25);
+        this.game.player.fat++;
       }
       this.dSpeed *= this.fatnessPenalty;
       return this.maxSpeed *= this.energyBoost;
@@ -206,7 +215,7 @@ define(function() {
       for (_i = 0, _len = bin.length; _i < _len; _i++) {
         entity = bin[_i];
         if ((entity != null) && this.canHit(entity) && this.hit(entity) && entity.player) {
-          this.recruit();
+          this.recruit(entity);
           break;
         }
       }

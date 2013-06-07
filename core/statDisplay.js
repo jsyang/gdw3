@@ -21,14 +21,14 @@ define(function() {
       ac.drawImage(atom.gfx.fatstart, this.margin, y);
       i = 1;
       if ((this.game.player.fat >> 0) > 0) {
-        for (j = _i = 0, _ref = this.game.player.fat >> 0; 0 <= _ref ? _i < _ref : _i > _ref; j = 0 <= _ref ? ++_i : --_i) {
+        for (j = _i = 0, _ref = this.game.player.fat >> 2; 0 <= _ref ? _i < _ref : _i > _ref; j = 0 <= _ref ? ++_i : --_i) {
           ac.drawImage(atom.gfx.fatmiddle, this.margin + 24 * i, y);
           i++;
         }
       }
       ac.drawImage(atom.gfx.fatend, this.margin + 24 * i, y);
       y -= 36;
-      if (!(this.game.player.metabolism < 0.001)) {
+      if (!(this.game.player.metabolism < 5)) {
         ac.drawImage(atom.gfx.bolt24, this.margin, y);
       }
       y -= 36;

@@ -22,9 +22,10 @@ define [
     player   :
       roe               : 0
       schoolSize        : 0
-      fat               : 1.2
-      metabolismFactor  : 0.000112
-      metabolism        : 0.00071
+      fat               : 10
+      starvedTime       : 0
+      starvedLimit      : 40
+      metabolism        : 0
       
     entities : []
     
@@ -129,7 +130,7 @@ define [
       
     intervalAddRoe : ->
       # Roe are rarer.
-      if @cycles % 310 is 0 and $$.r() < 0.12
+      if @cycles % 579 is 0 and $$.r() < 0.12
         @addRoe({
           x : atom.width + $$.R(100, 200)
           y : $$.R(20,atom.height-20)
@@ -199,21 +200,40 @@ define [
     update : (dt) ->
       @mode[@mode.current].apply(@, [dt])
     
+    starveSchool : ->
+      (
+        if e.player? and e.player is true and $$.r() < 0.4
+          # todo: show starving.
+          e.remove()
+          atom.playSound('die')
+          break
+      ) for e in @entities
+      
+      @player.starveTime = 0
+      return
+    
     metabolize : ->
-      if @player.schoolSize > 0
-        @player.fat -= @player.metabolism
-        if @player.fat < 0
-          @player.fat = 0
+      if @cycles % 90 is 0
+        if @player.schoolSize > 0
+          @player.fat -= @player.metabolism
+          
+          # show starving!
+          if @player.fat < 0
+            @player.fat = 0
+            @player.starveTime++
+            if @player.starveTime > @player.starveLimit
+              @starveSchool()
+              
     
     addFish : ->
-      @player.metabolism += $$.r(@player.metabolism)
+      @player.metabolism++
       @player.schoolSize++
     
     loseFish : ->
-      @player.fat        -= $$.r(1.5)
+      @player.fat -= $$.R(3,6)
       if @player.fat < 0
         @player.fat = 0
-      @player.metabolism -= $$.r(@player.metabolism)
+      @player.metabolism--
       @player.schoolSize--
     
     

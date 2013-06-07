@@ -6,6 +6,9 @@ define [
 ], (_util, _atom, FishGame) ->
   
   startGame = ->
+    # Loop the music.
+    atom.playSound('music', true)
+    
     window.game = new FishGame()
     window.game.run()
     
@@ -84,6 +87,9 @@ define [
   
   atom.preloadSounds({
     tick        : 'tick.mp3'
+    die         : 'die.mp3'
+    music       : 'music.mp3'
+    ahahah      : 'ahahah1.mp3'
     
     plankton1   : 'plankton1.mp3'
     plankton2   : 'plankton2.mp3'

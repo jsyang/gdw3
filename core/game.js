@@ -17,9 +17,10 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     FishGame.prototype.player = {
       roe: 0,
       schoolSize: 0,
-      fat: 1.2,
-      metabolismFactor: 0.000112,
-      metabolism: 0.00071
+      fat: 10,
+      starvedTime: 0,
+      starvedLimit: 40,
+      metabolism: 0
     };
 
     FishGame.prototype.entities = [];
@@ -138,7 +139,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
     };
 
     FishGame.prototype.intervalAddRoe = function() {
-      if (this.cycles % 310 === 0 && $$.r() < 0.12) {
+      if (this.cycles % 579 === 0 && $$.r() < 0.12) {
         this.addRoe({
           x: atom.width + $$.R(100, 200),
           y: $$.R(20, atom.height - 20)
@@ -229,26 +230,46 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       return this.mode[this.mode.current].apply(this, [dt]);
     };
 
+    FishGame.prototype.starveSchool = function() {
+      var e, _i, _len, _ref;
+      _ref = this.entities;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        e = _ref[_i];
+        if ((e.player != null) && e.player === true && $$.r() < 0.4) {
+          e.remove();
+          atom.playSound('die');
+          break;
+        }
+      }
+      this.player.starveTime = 0;
+    };
+
     FishGame.prototype.metabolize = function() {
-      if (this.player.schoolSize > 0) {
-        this.player.fat -= this.player.metabolism;
-        if (this.player.fat < 0) {
-          return this.player.fat = 0;
+      if (this.cycles % 90 === 0) {
+        if (this.player.schoolSize > 0) {
+          this.player.fat -= this.player.metabolism;
+          if (this.player.fat < 0) {
+            this.player.fat = 0;
+            this.player.starveTime++;
+            if (this.player.starveTime > this.player.starveLimit) {
+              return this.starveSchool();
+            }
+          }
         }
       }
     };
 
     FishGame.prototype.addFish = function() {
-      this.player.metabolism += $$.r(this.player.metabolism);
+      this.player.metabolism++;
       return this.player.schoolSize++;
     };
 
     FishGame.prototype.loseFish = function() {
-      this.player.fat -= $$.r(1.5);
+      this.player.fat -= $$.R(3, 6);
       if (this.player.fat < 0) {
         this.player.fat = 0;
       }
-      this.player.metabolism -= $$.r(this.player.metabolism);
+      this.player.metabolism--;
       return this.player.schoolSize--;
     };
 

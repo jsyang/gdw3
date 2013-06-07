@@ -10,15 +10,20 @@ define(function() {
 
     Swarm.prototype.y = 0;
 
+    Swarm.prototype.dx = 0;
+
+    Swarm.prototype.dy = 0;
+
     Swarm.prototype.children = null;
 
     Swarm.prototype.move = function() {
       var move;
-      if (this.x < -40) {
+      if (this.x < -atom.width) {
         move = null;
         return this.removeChildren();
       } else {
-        return this.x += 2 * this.game.current;
+        this.x += 2 * this.game.current + this.dx;
+        return this.y += this.dy;
       }
     };
 
@@ -28,7 +33,7 @@ define(function() {
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         c = _ref[_i];
-        _results.push((c != null) && !c.player ? c.remove() : void 0);
+        _results.push((c != null) && !c.player && !c.caught ? c.remove() : void 0);
       }
       return _results;
     };
@@ -40,6 +45,7 @@ define(function() {
         this[k] = v;
       }
       this.children = [];
+      this.dx = -$$.R(2, 7) * $$.r();
     }
 
     Swarm.prototype.add = function(a) {

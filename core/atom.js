@@ -2,7 +2,7 @@
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 define(function() {
-  var Game, atom, c, eventCode, _i, _ref, _ref1, _ref2;
+  var Game, atom, c, eventCode, _i, _ref, _ref1, _ref2, _ref3;
   window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
     return window.setTimeout((function() {
       return callback(1000 / 60);
@@ -270,6 +270,9 @@ define(function() {
   if ((_ref2 = atom._mixer) != null) {
     _ref2._activeSounds = [];
   }
+  if ((_ref3 = atom._mixer) != null) {
+    _ref3._activeLoops = [];
+  }
   atom.loadSound = function(url, callback) {
     var request;
     if (!atom.audioContext) {
@@ -318,7 +321,7 @@ define(function() {
     }
     return _results;
   };
-  atom.playSound = function(name, track, time) {
+  atom.loopSound = function(name, track, time) {
     var source;
     if (track == null) {
       track = true;
@@ -335,14 +338,37 @@ define(function() {
     source.noteOn(time);
     return source;
   };
+  atom.playSound = function(name, loop_, track, time) {
+    var source;
+    if (loop_ == null) {
+      loop_ = false;
+    }
+    if (track == null) {
+      track = true;
+    }
+    if (time == null) {
+      time = 0;
+    }
+    if (!(atom.sfx[name] && atom.audioContext)) {
+      return;
+    }
+    source = atom.audioContext.createBufferSource();
+    source.buffer = atom.sfx[name];
+    if (!!loop_) {
+      source.loop = true;
+    }
+    source.connect(atom._mixer);
+    source.noteOn(time);
+    return source;
+  };
   atom.stopAllSounds = function() {
-    var sound, _j, _len, _ref3;
+    var sound, _j, _len, _ref4;
     if (!atom.audioContext) {
       return;
     }
-    _ref3 = atom._mixer._activeSounds;
-    for (_j = 0, _len = _ref3.length; _j < _len; _j++) {
-      sound = _ref3[_j];
+    _ref4 = atom._mixer._activeSounds;
+    for (_j = 0, _len = _ref4.length; _j < _len; _j++) {
+      sound = _ref4[_j];
       if (sound != null) {
         sound.stop(0);
       }
@@ -350,8 +376,8 @@ define(function() {
     atom._mixer._activeSounds = [];
   };
   atom.setVolume = function(v) {
-    var _ref3;
-    return (_ref3 = atom._mixer) != null ? _ref3.gain.value = v : void 0;
+    var _ref4;
+    return (_ref4 = atom._mixer) != null ? _ref4.gain.value = v : void 0;
   };
   return window.atom = atom;
 });

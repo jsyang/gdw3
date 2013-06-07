@@ -17,12 +17,12 @@ define ->
         (
           ac.drawImage(atom.gfx.fatmiddle, @margin+24*i, y)
           i++
-        ) for j in [0...(@game.player.fat>>0)]
+        ) for j in [0...(@game.player.fat>>2)]
       ac.drawImage(atom.gfx.fatend, @margin+24*i, y)
       
       # Metabolism display
       y -= 36
-      ac.drawImage(atom.gfx.bolt24, @margin, y) unless @game.player.metabolism < 0.001
+      ac.drawImage(atom.gfx.bolt24, @margin, y) unless @game.player.metabolism < 5
       #ac.font = '24px sans-serif'
       #ac.fillText(''+((@game.player.metabolism*@game.player.metabolismFactor_)>>0), @margin+28, y+20)
       #ac.fillText(@game.player.metabolism, @margin+28, y+20)
