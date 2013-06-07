@@ -20,6 +20,7 @@ define(['core/util', 'core/atom', 'core/game'], function(_util, _atom, FishGame)
     }
   };
   atom.preloadImages({
+    gameover: 'gameover.png',
     swimandeat: 'swimandeat.png',
     spawninggrounds: 'spawninggrounds.png',
     bolt24: 'bolt24.png',

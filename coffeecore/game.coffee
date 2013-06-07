@@ -13,11 +13,11 @@ define [
     
   class FishGame extends atom.Game
     
-    cycles                : 0
-    cyclesPeriod          : 600
-    
-    # flow of the water
-    current  : -1.9
+    gameover      : false
+    cycles        : 0
+    cyclesPeriod  : 600
+    current       : -1.9     # flow of the water
+    entities      : []
     
     player   :
       roe               : 0
@@ -26,9 +26,6 @@ define [
       starvedTime       : 0
       starvedLimit      : 40
       metabolism        : 0
-      
-    entities : []
-    
     
     constructor : ->
       makeFish = (p) =>
@@ -43,7 +40,7 @@ define [
         x : $$.R(200,400)
         y : 200
         
-      @entities = @entities.concat((makeFish(p3) for i in [0...3]))
+      @entities = @entities.concat((makeFish(p3) for i in [0...1]))
       
       @hash2d_new = new Hash2D()
       @hash2d     = new Hash2D()
@@ -223,6 +220,10 @@ define [
             @player.starveTime++
             if @player.starveTime > @player.starveLimit
               @starveSchool()
+        
+        else if @gameover is false
+          @entities.push(new StageTitle({ SPRITENAME : 'gameover' }))
+          @gameover = true
               
     
     addFish : ->

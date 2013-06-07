@@ -42,13 +42,13 @@ define ->
         H : 86
     
     FISHCHANCE :
-      'fledgeling0' : 3
-      'fledgeling1' : 3
-      'fish00'      : 1
-      'fish10'      : 1
-      #'fish01'      : 2
-      #'fish11'      : 1
-      'fish20'      : 1
+      'fledgeling0' : 12
+      'fledgeling1' : 12
+      'fish00'      : 7
+      #'fish01'      : 7
+      'fish10'      : 4
+      #'fish11'      : 4
+      #'fish20'      : 1
       #'fish21'      : 1
     
     # Fish have a lifetime...

@@ -8,11 +8,15 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
 
     __extends(FishGame, _super);
 
+    FishGame.prototype.gameover = false;
+
     FishGame.prototype.cycles = 0;
 
     FishGame.prototype.cyclesPeriod = 600;
 
     FishGame.prototype.current = -1.9;
+
+    FishGame.prototype.entities = [];
 
     FishGame.prototype.player = {
       roe: 0,
@@ -22,8 +26,6 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       starvedLimit: 40,
       metabolism: 0
     };
-
-    FishGame.prototype.entities = [];
 
     function FishGame() {
       var i, makeFish, p3,
@@ -44,7 +46,7 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
       this.entities = this.entities.concat((function() {
         var _i, _results;
         _results = [];
-        for (i = _i = 0; _i < 3; i = ++_i) {
+        for (i = _i = 0; _i < 1; i = ++_i) {
           _results.push(makeFish(p3));
         }
         return _results;
@@ -255,6 +257,11 @@ define(['core/fish', 'core/bubble', 'core/hook', 'core/hash2d', 'core/plankton',
               return this.starveSchool();
             }
           }
+        } else if (this.gameover === false) {
+          this.entities.push(new StageTitle({
+            SPRITENAME: 'gameover'
+          }));
+          return this.gameover = true;
         }
       }
     };

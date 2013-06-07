@@ -29,6 +29,7 @@ define [
       false
     
   atom.preloadImages({
+    gameover        : 'gameover.png'
     swimandeat      : 'swimandeat.png'
     spawninggrounds : 'spawninggrounds.png'
   
