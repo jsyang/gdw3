@@ -1,0 +1,14 @@
+# YAML equivalent of grunt.registerTask(<taskname>, [<task1>, <task2>, ...])
+
+deploy:
+  - build
+  - uglify
+
+build:
+  - exec:copyAssets
+  - browserify
+
+default:
+  - build
+  - http-server
+  - watch
