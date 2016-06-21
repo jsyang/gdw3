@@ -885,7 +885,7 @@ Fish.prototype.remove = function() {
 module.exports = Fish;
 },{"./util":15}],5:[function(require,module,exports){
 var $$ = require('./util');
-var AtomGame = require('atom').Game;
+var AtomGame = require('./atom/atom').Game;
 
 var Fish = require('./fish');
 var Bubble = require('./bubble');
@@ -1287,7 +1287,7 @@ function draw() {
 
 
 module.exports = FishGame;
-},{"./bubble":3,"./fish":4,"./hash2d":6,"./hook":7,"./plankton":9,"./rock":10,"./roe":11,"./stageTitle":12,"./statDisplay":13,"./swarm":14,"./util":15,"atom":1}],6:[function(require,module,exports){
+},{"./atom/atom":1,"./bubble":3,"./fish":4,"./hash2d":6,"./hook":7,"./plankton":9,"./rock":10,"./roe":11,"./stageTitle":12,"./statDisplay":13,"./swarm":14,"./util":15}],6:[function(require,module,exports){
 function Hash2D(params) {
     var k, v;
     for (k in params) {
@@ -1487,7 +1487,7 @@ Hook.prototype.SIZES = {
 
 module.exports = Hook;
 },{"./util":15}],8:[function(require,module,exports){
-var atom = require('atom');
+var atom = require('./atom/atom');
 window.atom = atom;
 
 var util = require('./util');
@@ -1581,7 +1581,7 @@ function onDOMContentLoaded() {
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 
-},{"./game":5,"./util":15,"atom":1}],9:[function(require,module,exports){
+},{"./atom/atom":1,"./game":5,"./util":15}],9:[function(require,module,exports){
 var $$ = require('./util');
 
 function Plankton(params) {
