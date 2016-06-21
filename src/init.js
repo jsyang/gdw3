@@ -1,4 +1,4 @@
-var atom = require('atom');
+var atom = require('./atom/atom');
 window.atom = atom;
 
 var util = require('./util');

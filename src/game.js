@@ -1,5 +1,5 @@
 var $$ = require('./util');
-var AtomGame = require('atom').Game;
+var AtomGame = require('./atom/atom').Game;
 
 var Fish = require('./fish');
 var Bubble = require('./bubble');
@@ -46,6 +46,8 @@ function FishGame() {
         game: this
     }));
     this.registerInputs();
+
+    // Inheritance from atom.Game (may change...)
     AtomGame.call(this, {
         draw: draw,
         update: update
@@ -258,6 +260,10 @@ FishGame.prototype.starveSchool = function() {
     this.player.starveTime = 0;
 };
 
+function reloadPage() {
+    location = location;
+}
+
 FishGame.prototype.metabolize = function() {
     if (this.cycles % 90 === 0) {
         if (this.player.schoolSize > 0) {
@@ -274,6 +280,8 @@ FishGame.prototype.metabolize = function() {
                 SPRITENAME: 'gameover',
                 game: this
             }));
+
+            setTimeout(reloadPage, 3000);
             return this.gameover = true;
         }
     }
