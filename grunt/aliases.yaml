@@ -2,9 +2,9 @@
 
 deploy:
   - build
-  - uglify
   - htmlmin
   - inline
+  - exec:deploy
 
 build:
   - exec:copyAssets

@@ -1,10 +1,8 @@
 module.exports = {
     build : {
         files : [{
-            expand : true,
-            cwd    : 'src/js',
-            src    : '*.js',
-            dest   : 'build'
+            src    : 'build/main.js',
+            dest   : 'build/main.js'
         }]
     }
 };
